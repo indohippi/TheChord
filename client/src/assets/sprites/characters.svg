@@ -1,0 +1,468 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" style="display:none;">
+  <!-- Covenant Weaver Characters -->
+  <symbol id="covenant-weaver-south" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Robe details -->
+    <rect x="10" y="16" width="12" height="2" />
+    <rect x="11" y="18" width="10" height="2" />
+    <!-- Kabbalah symbol -->
+    <rect x="14" y="8" width="4" height="1" />
+    <rect x="14" y="10" width="4" height="1" />
+    <rect x="15" y="7" width="2" height="4" />
+  </symbol>
+
+  <symbol id="covenant-weaver-north" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Robe details -->
+    <rect x="10" y="16" width="12" height="2" />
+    <rect x="11" y="18" width="10" height="2" />
+    <!-- Kabbalah symbol -->
+    <rect x="14" y="6" width="4" height="1" />
+    <rect x="15" y="6" width="2" height="4" />
+  </symbol>
+
+  <symbol id="covenant-weaver-east" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Arms -->
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Robe details -->
+    <rect x="11" y="16" width="12" height="2" />
+    <rect x="12" y="18" width="10" height="2" />
+    <!-- Kabbalah symbol -->
+    <rect x="16" y="6" width="2" height="4" />
+  </symbol>
+
+  <symbol id="covenant-weaver-west" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Robe details -->
+    <rect x="9" y="16" width="12" height="2" />
+    <rect x="10" y="18" width="10" height="2" />
+    <!-- Kabbalah symbol -->
+    <rect x="14" y="6" width="2" height="4" />
+  </symbol>
+
+  <!-- Philosopher-King Characters -->
+  <symbol id="philosopher-king-south" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Crown -->
+    <rect x="12" y="3" width="8" height="2" />
+    <rect x="11" y="3" width="1" height="1" />
+    <rect x="20" y="3" width="1" height="1" />
+    <rect x="13" y="2" width="1" height="1" />
+    <rect x="18" y="2" width="1" height="1" />
+    <!-- Face -->
+    <rect x="14" y="7" width="1" height="1" />
+    <rect x="17" y="7" width="1" height="1" />
+    <rect x="15" y="9" width="2" height="1" />
+  </symbol>
+
+  <symbol id="philosopher-king-north" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Crown -->
+    <rect x="12" y="3" width="8" height="2" />
+    <rect x="11" y="3" width="1" height="1" />
+    <rect x="20" y="3" width="1" height="1" />
+    <rect x="13" y="2" width="1" height="1" />
+    <rect x="18" y="2" width="1" height="1" />
+    <!-- Back of head -->
+    <rect x="13" y="6" width="6" height="4" />
+  </symbol>
+
+  <symbol id="philosopher-king-east" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="13" y="4" width="8" height="8" />
+    <!-- Arms -->
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Crown -->
+    <rect x="13" y="3" width="8" height="2" />
+    <rect x="20" y="3" width="1" height="1" />
+    <rect x="18" y="2" width="1" height="1" />
+    <!-- Face -->
+    <rect x="18" y="7" width="1" height="1" />
+    <rect x="18" y="9" width="1" height="1" />
+  </symbol>
+
+  <symbol id="philosopher-king-west" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="11" y="4" width="8" height="8" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Crown -->
+    <rect x="11" y="3" width="8" height="2" />
+    <rect x="11" y="3" width="1" height="1" />
+    <rect x="13" y="2" width="1" height="1" />
+    <!-- Face -->
+    <rect x="13" y="7" width="1" height="1" />
+    <rect x="13" y="9" width="1" height="1" />
+  </symbol>
+
+  <!-- Chakravarti Avatar Characters -->
+  <symbol id="chakravarti-avatar-south" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Arms (multiple arms) -->
+    <rect x="7" y="12" width="5" height="4" />
+    <rect x="20" y="12" width="5" height="4" />
+    <rect x="8" y="16" width="4" height="4" />
+    <rect x="20" y="16" width="4" height="4" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="14" y="7" width="1" height="1" />
+    <rect x="17" y="7" width="1" height="1" />
+    <rect x="15" y="9" width="2" height="1" />
+    <!-- Armor details -->
+    <rect x="12" y="12" width="8" height="2" />
+    <rect x="13" y="14" width="6" height="2" />
+  </symbol>
+
+  <symbol id="chakravarti-avatar-north" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Arms (multiple arms) -->
+    <rect x="7" y="12" width="5" height="4" />
+    <rect x="20" y="12" width="5" height="4" />
+    <rect x="8" y="16" width="4" height="4" />
+    <rect x="20" y="16" width="4" height="4" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Back of head -->
+    <rect x="13" y="6" width="6" height="4" />
+    <!-- Armor details -->
+    <rect x="12" y="12" width="8" height="2" />
+    <rect x="13" y="14" width="6" height="2" />
+  </symbol>
+
+  <symbol id="chakravarti-avatar-east" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="13" y="4" width="7" height="8" />
+    <!-- Arms (multiple) -->
+    <rect x="20" y="12" width="5" height="4" />
+    <rect x="20" y="16" width="4" height="4" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="18" y="7" width="1" height="1" />
+    <rect x="18" y="9" width="1" height="1" />
+    <!-- Armor details -->
+    <rect x="12" y="12" width="8" height="2" />
+    <rect x="13" y="14" width="6" height="2" />
+  </symbol>
+
+  <symbol id="chakravarti-avatar-west" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="7" height="8" />
+    <!-- Arms (multiple) -->
+    <rect x="7" y="12" width="5" height="4" />
+    <rect x="8" y="16" width="4" height="4" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="13" y="7" width="1" height="1" />
+    <rect x="13" y="9" width="1" height="1" />
+    <!-- Armor details -->
+    <rect x="12" y="12" width="8" height="2" />
+    <rect x="13" y="14" width="6" height="2" />
+  </symbol>
+
+  <!-- Serpent's Whisper Characters -->
+  <symbol id="serpents-whisper-south" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Serpent hood -->
+    <rect x="10" y="6" width="2" height="6" />
+    <rect x="20" y="6" width="2" height="6" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="14" y="7" width="1" height="1" />
+    <rect x="17" y="7" width="1" height="1" />
+    <rect x="15" y="9" width="2" height="1" />
+    <!-- Robe details -->
+    <rect x="11" y="16" width="10" height="2" />
+  </symbol>
+
+  <symbol id="serpents-whisper-north" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Serpent hood -->
+    <rect x="10" y="6" width="2" height="6" />
+    <rect x="20" y="6" width="2" height="6" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Robe details -->
+    <rect x="11" y="16" width="10" height="2" />
+  </symbol>
+
+  <symbol id="serpents-whisper-east" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="13" y="4" width="7" height="8" />
+    <!-- Serpent hood -->
+    <rect x="20" y="6" width="2" height="6" />
+    <!-- Arms -->
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="18" y="7" width="1" height="1" />
+    <rect x="18" y="9" width="1" height="1" />
+    <!-- Robe details -->
+    <rect x="12" y="16" width="10" height="2" />
+  </symbol>
+
+  <symbol id="serpents-whisper-west" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="7" height="8" />
+    <!-- Serpent hood -->
+    <rect x="10" y="6" width="2" height="6" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="13" y="7" width="1" height="1" />
+    <rect x="13" y="9" width="1" height="1" />
+    <!-- Robe details -->
+    <rect x="10" y="16" width="10" height="2" />
+  </symbol>
+
+  <!-- Jade Dragon Characters -->
+  <symbol id="jade-dragon-south" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Dragon details -->
+    <rect x="10" y="5" width="2" height="3" />
+    <rect x="20" y="5" width="2" height="3" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="14" y="7" width="1" height="1" />
+    <rect x="17" y="7" width="1" height="1" />
+    <rect x="15" y="9" width="2" height="1" />
+    <!-- Robe details -->
+    <rect x="11" y="14" width="10" height="2" />
+    <rect x="12" y="16" width="8" height="2" />
+    <!-- Yin-Yang -->
+    <rect x="15" y="5" width="2" height="2" />
+  </symbol>
+
+  <symbol id="jade-dragon-north" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Dragon details -->
+    <rect x="10" y="5" width="2" height="3" />
+    <rect x="20" y="5" width="2" height="3" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Robe details -->
+    <rect x="11" y="14" width="10" height="2" />
+    <rect x="12" y="16" width="8" height="2" />
+    <!-- Yin-Yang -->
+    <rect x="15" y="7" width="2" height="2" />
+  </symbol>
+
+  <symbol id="jade-dragon-east" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="13" y="4" width="7" height="8" />
+    <!-- Dragon details -->
+    <rect x="20" y="5" width="2" height="3" />
+    <!-- Arms -->
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="18" y="7" width="1" height="1" />
+    <rect x="18" y="9" width="1" height="1" />
+    <!-- Robe details -->
+    <rect x="12" y="14" width="10" height="2" />
+    <rect x="13" y="16" width="8" height="2" />
+  </symbol>
+
+  <symbol id="jade-dragon-west" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="7" height="8" />
+    <!-- Dragon details -->
+    <rect x="10" y="5" width="2" height="3" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="13" y="7" width="1" height="1" />
+    <rect x="13" y="9" width="1" height="1" />
+    <!-- Robe details -->
+    <rect x="10" y="14" width="10" height="2" />
+    <rect x="11" y="16" width="8" height="2" />
+  </symbol>
+
+  <!-- Default Characters -->
+  <symbol id="default-south" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="14" y="7" width="1" height="1" />
+    <rect x="17" y="7" width="1" height="1" />
+    <rect x="15" y="9" width="2" height="1" />
+  </symbol>
+
+  <symbol id="default-north" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="8" height="8" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Back of head -->
+    <rect x="13" y="6" width="6" height="4" />
+  </symbol>
+
+  <symbol id="default-east" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="13" y="4" width="7" height="8" />
+    <!-- Arms -->
+    <rect x="20" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="18" y="7" width="1" height="1" />
+    <rect x="18" y="9" width="1" height="1" />
+  </symbol>
+
+  <symbol id="default-west" viewBox="0 0 32 32">
+    <!-- Body -->
+    <rect x="12" y="12" width="8" height="12" />
+    <!-- Head -->
+    <rect x="12" y="4" width="7" height="8" />
+    <!-- Arms -->
+    <rect x="8" y="12" width="4" height="8" />
+    <!-- Legs -->
+    <rect x="12" y="24" width="4" height="6" />
+    <rect x="16" y="24" width="4" height="6" />
+    <!-- Face -->
+    <rect x="13" y="7" width="1" height="1" />
+    <rect x="13" y="9" width="1" height="1" />
+  </symbol>
+</svg>

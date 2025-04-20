@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" style="display:none;">
+  <!-- Azure Labyrinth Environment Elements -->
+  <symbol id="azure-crystal" viewBox="0 0 32 32">
+    <!-- Crystal formation -->
+    <rect x="12" y="4" width="8" height="24" />
+    <rect x="8" y="8" width="16" height="16" />
+    <rect x="10" y="6" width="12" height="20" />
+    <!-- Inner glow -->
+    <rect x="14" y="12" width="4" height="8" />
+  </symbol>
+
+  <symbol id="azure-platform" viewBox="0 0 32 32">
+    <!-- Marble platform with geometric patterns -->
+    <rect x="2" y="16" width="28" height="4" />
+    <rect x="4" y="12" width="24" height="4" />
+    <rect x="6" y="20" width="20" height="4" />
+    <!-- Greek patterns -->
+    <rect x="6" y="14" width="2" height="2" />
+    <rect x="10" y="14" width="2" height="2" />
+    <rect x="14" y="14" width="2" height="2" />
+    <rect x="18" y="14" width="2" height="2" />
+    <rect x="22" y="14" width="2" height="2" />
+  </symbol>
+
+  <symbol id="azure-pedestal" viewBox="0 0 32 32">
+    <!-- Greek column-like pedestal -->
+    <rect x="8" y="4" width="16" height="4" />
+    <rect x="10" y="8" width="12" height="16" />
+    <rect x="8" y="24" width="16" height="4" />
+    <!-- Column details -->
+    <rect x="12" y="8" width="8" height="16" />
+    <rect x="10" y="12" width="12" height="2" />
+    <rect x="10" y="18" width="12" height="2" />
+  </symbol>
+
+  <!-- Obsidian Dunes Environment Elements -->
+  <symbol id="obsidian-obelisk" viewBox="0 0 32 32">
+    <!-- Obelisk shape -->
+    <rect x="12" y="2" width="8" height="4" />
+    <rect x="10" y="6" width="12" height="22" />
+    <rect x="8" y="28" width="16" height="2" />
+    <!-- Hieroglyphic details -->
+    <rect x="12" y="8" width="2" height="2" />
+    <rect x="16" y="8" width="2" height="2" />
+    <rect x="14" y="12" width="4" height="2" />
+    <rect x="12" y="16" width="2" height="2" />
+    <rect x="16" y="16" width="2" height="2" />
+    <rect x="14" y="20" width="4" height="2" />
+  </symbol>
+
+  <symbol id="obsidian-dune" viewBox="0 0 32 32">
+    <!-- Sand dune shape -->
+    <rect x="0" y="24" width="32" height="8" />
+    <rect x="4" y="20" width="24" height="4" />
+    <rect x="8" y="16" width="16" height="4" />
+    <rect x="12" y="12" width="8" height="4" />
+    <!-- Wind-blown sand details -->
+    <rect x="4" y="23" width="2" height="1" />
+    <rect x="10" y="19" width="2" height="1" />
+    <rect x="18" y="15" width="2" height="1" />
+  </symbol>
+
+  <symbol id="obsidian-pyramid" viewBox="0 0 32 32">
+    <!-- Pyramid structure -->
+    <rect x="4" y="24" width="24" height="6" />
+    <rect x="6" y="18" width="20" height="6" />
+    <rect x="8" y="12" width="16" height="6" />
+    <rect x="10" y="6" width="12" height="6" />
+    <rect x="12" y="0" width="8" height="6" />
+    <!-- Entrance -->
+    <rect x="14" y="24" width="4" height="4" />
+  </symbol>
+
+  <!-- Jade Canopy Environment Elements -->
+  <symbol id="jade-tree" viewBox="0 0 32 32">
+    <!-- Tree trunk -->
+    <rect x="12" y="16" width="8" height="16" />
+    <!-- Foliage -->
+    <rect x="4" y="8" width="24" height="8" />
+    <rect x="8" y="0" width="16" height="8" />
+    <!-- Bioluminescent details -->
+    <rect x="6" y="10" width="2" height="2" />
+    <rect x="10" y="6" width="2" height="2" />
+    <rect x="20" y="6" width="2" height="2" />
+    <rect x="24" y="10" width="2" height="2" />
+  </symbol>
+
+  <symbol id="jade-temple" viewBox="0 0 32 32">
+    <!-- Temple structure -->
+    <rect x="4" y="16" width="24" height="16" />
+    <rect x="6" y="10" width="20" height="6" />
+    <rect x="10" y="4" width="12" height="6" />
+    <!-- Doorway -->
+    <rect x="13" y="20" width="6" height="12" />
+    <!-- Temple details -->
+    <rect x="8" y="18" width="4" height="2" />
+    <rect x="20" y="18" width="4" height="2" />
+    <rect x="8" y="22" width="2" height="8" />
+    <rect x="22" y="22" width="2" height="8" />
+  </symbol>
+
+  <symbol id="jade-lantern" viewBox="0 0 32 32">
+    <!-- Lantern -->
+    <rect x="12" y="8" width="8" height="12" />
+    <rect x="10" y="10" width="12" height="8" />
+    <!-- Top -->
+    <rect x="14" y="4" width="4" height="4" />
+    <rect x="13" y="2" width="6" height="2" />
+    <!-- Glowing interior -->
+    <rect x="13" y="12" width="6" height="4" />
+    <!-- Chain -->
+    <rect x="15" y="0" width="2" height="2" />
+  </symbol>
+
+  <!-- Generic Environment Elements -->
+  <symbol id="echo-portal" viewBox="0 0 32 32">
+    <!-- Portal frame -->
+    <rect x="4" y="4" width="24" height="24" />
+    <rect x="8" y="8" width="16" height="16" />
+    <!-- Portal opening -->
+    <rect x="12" y="12" width="8" height="8" />
+    <!-- Energy tendrils -->
+    <rect x="2" y="12" width="2" height="8" />
+    <rect x="28" y="12" width="2" height="8" />
+    <rect x="12" y="2" width="8" height="2" />
+    <rect x="12" y="28" width="8" height="2" />
+  </symbol>
+
+  <symbol id="ether-field" viewBox="0 0 32 32">
+    <!-- Swirling ether field -->
+    <rect x="8" y="8" width="16" height="16" />
+    <rect x="12" y="4" width="8" height="4" />
+    <rect x="12" y="24" width="8" height="4" />
+    <rect x="4" y="12" width="4" height="8" />
+    <rect x="24" y="12" width="4" height="8" />
+    <!-- Energy patterns -->
+    <rect x="12" y="12" width="8" height="8" />
+    <rect x="14" y="14" width="4" height="4" />
+  </symbol>
+  
+  <symbol id="cosmic-fragment" viewBox="0 0 32 32">
+    <!-- Floating cosmic fragment -->
+    <rect x="12" y="8" width="8" height="16" />
+    <rect x="10" y="10" width="12" height="12" />
+    <rect x="8" y="14" width="16" height="4" />
+    <!-- Energy core -->
+    <rect x="14" y="12" width="4" height="8" />
+  </symbol>
+</svg>
