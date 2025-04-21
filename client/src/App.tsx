@@ -1,6 +1,6 @@
 import { Suspense, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
-import { KeyboardControls } from "@react-three/drei";
+import { KeyboardControls, OrbitControls } from "@react-three/drei";
 import { CharacterSelection } from "@/game/components/CharacterSelection";
 import { MainMenu } from "@/game/components/MainMenu";
 import { Lights } from "@/game/components/Lights";
@@ -11,6 +11,9 @@ import { EchoZone } from "@/game/components/EchoZone";
 import { Player } from "@/game/components/Player";
 import { MovementSystem } from "@/game/systems/MovementSystem";
 import { CollisionSystem } from "@/game/systems/CollisionSystem";
+import { CombatSystem, CombatActionType } from "@/game/systems/CombatSystem";
+import { GridSystem, GridCell } from "@/game/systems/GridSystem";
+import { Grid } from "@/game/components/Grid";
 import "@fontsource/inter";
 
 // Define control keys for the game
@@ -28,8 +31,9 @@ export enum Controls {
 
 // Main App component
 function App() {
-  const { gamePhase, setGamePhase } = useGameState();
+  const { gamePhase, setGamePhase, inCombat } = useGameState();
   const [showCanvas, setShowCanvas] = useState(false);
+  const [activeCombatAction, setActiveCombatAction] = useState<CombatActionType | null>(null);
 
   // Define key mappings
   const keyMap = [
@@ -53,6 +57,19 @@ function App() {
     
     console.log("Game initialized, current phase:", gamePhase);
   }, []);
+
+  // Handle grid cell click
+  const handleGridCellClick = (cell: GridCell) => {
+    if (!activeCombatAction) return;
+    
+    console.log(`Grid cell clicked at [${cell.position[0]}, ${cell.position[1]}] with action ${activeCombatAction}`);
+    
+    // In a complete implementation, we would dispatch the action to the combat system
+    // For now, just log it
+    
+    // Reset active action after click
+    setActiveCombatAction(null);
+  };
 
   return (
     <div className="w-full h-full relative overflow-hidden">
@@ -83,15 +100,38 @@ function App() {
                 {/* Game systems */}
                 <MovementSystem />
                 <CollisionSystem />
+                <CombatSystem />
+                <GridSystem />
+                
+                {/* Camera controls for tactical view during combat */}
+                {gamePhase === 'combat' && (
+                  <OrbitControls 
+                    enablePan={true}
+                    enableZoom={true}
+                    maxPolarAngle={Math.PI / 2.2}
+                    minPolarAngle={Math.PI / 6}
+                  />
+                )}
                 
                 <Suspense fallback={null}>
                   <EchoZone />
                   <Player />
+                  
+                  {/* Grid visualization during combat */}
+                  {gamePhase === 'combat' && (
+                    <Grid 
+                      selectedAction={activeCombatAction}
+                      onCellClick={handleGridCellClick}
+                    />
+                  )}
                 </Suspense>
               </Canvas>
               
               {/* UI overlay */}
-              <GameUI />
+              <GameUI 
+                activeCombatAction={activeCombatAction}
+                setActiveCombatAction={setActiveCombatAction}
+              />
             </>
           )}
 

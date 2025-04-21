@@ -6,7 +6,12 @@ import { DialogueSystem } from './DialogueSystem';
 import { dialogues } from '../data/dialogues';
 import { CombatActionType } from '../systems/CombatSystem';
 
-export function GameUI() {
+interface GameUIProps {
+  activeCombatAction?: CombatActionType | null;
+  setActiveCombatAction?: (action: CombatActionType | null) => void;
+}
+
+export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProps) {
   const { selectedClass, stats, abilities, activeAbilityIndex, useAbility } = useCharacter();
   const { 
     gamePhase, 
@@ -25,10 +30,14 @@ export function GameUI() {
   // UI states
   const [showZoneInfo, setShowZoneInfo] = useState(true);
   const [showAbilityTooltip, setShowAbilityTooltip] = useState<number | null>(null);
-  const [activeCombatAction, setActiveCombatAction] = useState<CombatActionType | null>(null);
+  const [localActiveCombatAction, setLocalActiveCombatAction] = useState<CombatActionType | null>(null);
   const [combatTurn, setCombatTurn] = useState<number>(1);
   const [isPlayerTurn, setIsPlayerTurn] = useState<boolean>(true);
   const [activeEntity, setActiveEntity] = useState<string>('player');
+  
+  // Use props if provided, otherwise use local state
+  const currentActiveCombatAction = activeCombatAction !== undefined ? activeCombatAction : localActiveCombatAction;
+  const updateActiveCombatAction = setActiveCombatAction || setLocalActiveCombatAction;
   
   // Show zone info briefly when entering a zone
   useEffect(() => {
@@ -48,14 +57,14 @@ export function GameUI() {
       useAbility(abilityIndex);
       
       if (gamePhase === 'combat') {
-        setActiveCombatAction(CombatActionType.ABILITY);
+        updateActiveCombatAction(CombatActionType.ABILITY);
       }
     }
   };
   
   // Combat action handlers
   const handleCombatAction = (action: CombatActionType) => {
-    setActiveCombatAction(action);
+    updateActiveCombatAction(action);
     console.log(`Selected action: ${action}`);
     
     // In a complete implementation, we would integrate with the CombatSystem
@@ -69,6 +78,18 @@ export function GameUI() {
     
     endCombat();
     console.log('Combat ended - player victorious!');
+  };
+  
+  // End turn handler
+  const handleEndTurn = () => {
+    console.log('Ending player turn');
+    setIsPlayerTurn(false);
+    
+    // Simulate enemy turn after a delay
+    setTimeout(() => {
+      setIsPlayerTurn(true);
+      setCombatTurn(prev => prev + 1);
+    }, 2000);
   };
   
   // Render health/energy bars
@@ -94,7 +115,7 @@ export function GameUI() {
   
   // Action button renderer
   const renderActionButton = (action: CombatActionType, label: string, icon: string) => {
-    const isActive = activeCombatAction === action;
+    const isActive = currentActiveCombatAction === action;
     
     return (
       <button
@@ -215,7 +236,7 @@ export function GameUI() {
             
             <div>
               <button 
-                onClick={() => console.log('End turn')}
+                onClick={handleEndTurn}
                 className="bg-gray-700 text-white px-3 py-1 rounded-sm hover:bg-gray-600"
                 disabled={!isPlayerTurn}
               >
@@ -266,12 +287,12 @@ export function GameUI() {
           {/* Combat log message */}
           <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-gray-900 bg-opacity-75 p-2 rounded-lg border border-gray-700 max-w-lg text-center">
             <div className="text-yellow-400">
-              {activeCombatAction === CombatActionType.MOVE && 'Select a grid cell to move to.'}
-              {activeCombatAction === CombatActionType.ATTACK && 'Select an enemy to attack.'}
-              {activeCombatAction === CombatActionType.ABILITY && 'Select a target for your ability.'}
-              {activeCombatAction === CombatActionType.DEFEND && 'You take a defensive stance, reducing incoming damage.'}
-              {activeCombatAction === CombatActionType.WAIT && 'You wait, conserving your energy.'}
-              {!activeCombatAction && isPlayerTurn && 'Choose an action from the menu.'}
+              {currentActiveCombatAction === CombatActionType.MOVE && 'Select a grid cell to move to.'}
+              {currentActiveCombatAction === CombatActionType.ATTACK && 'Select an enemy to attack.'}
+              {currentActiveCombatAction === CombatActionType.ABILITY && 'Select a target for your ability.'}
+              {currentActiveCombatAction === CombatActionType.DEFEND && 'You take a defensive stance, reducing incoming damage.'}
+              {currentActiveCombatAction === CombatActionType.WAIT && 'You wait, conserving your energy.'}
+              {!currentActiveCombatAction && isPlayerTurn && 'Choose an action from the menu.'}
               {!isPlayerTurn && 'Enemy is taking their turn...'}
             </div>
           </div>
