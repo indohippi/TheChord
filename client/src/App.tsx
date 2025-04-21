@@ -14,6 +14,10 @@ import { CollisionSystem } from "@/game/systems/CollisionSystem";
 import { CombatSystem, CombatActionType } from "@/game/systems/CombatSystem";
 import { GridSystem, GridCell } from "@/game/systems/GridSystem";
 import { Grid } from "@/game/components/Grid";
+import { TacticalCombatUI } from "@/game/components/TacticalCombatUI";
+import { GridVisualizer } from "@/game/components/GridVisualizer";
+import { EnemyStatsDisplay } from "@/game/components/EnemyStatsDisplay";
+import { useTacticalCombat } from "@/game/hooks/useTacticalCombat";
 import "@fontsource/inter";
 
 // Define control keys for the game
@@ -34,6 +38,17 @@ function App() {
   const { gamePhase, setGamePhase, inCombat } = useGameState();
   const [showCanvas, setShowCanvas] = useState(false);
   const [activeCombatAction, setActiveCombatAction] = useState<CombatActionType | null>(null);
+  
+  // Import our tactical combat hook
+  const { 
+    combatState,
+    selectAction,
+    executeMove,
+    executeAttack,
+    executeAbility,
+    selectEnemy,
+    endPlayerTurn
+  } = useTacticalCombat();
 
   // Define key mappings
   const keyMap = [

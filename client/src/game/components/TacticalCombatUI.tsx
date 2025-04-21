@@ -169,8 +169,8 @@ export function TacticalCombatUI({
               position={[0, 0, 0.1]}
               fontSize={0.25}
               color="white"
-              anchorX="middle"
-              anchorY="middle"
+              anchorX="center"
+              anchorY="center"
             >
               Move
             </Text>
@@ -189,8 +189,8 @@ export function TacticalCombatUI({
               position={[0, 0, 0.1]}
               fontSize={0.25}
               color="white"
-              anchorX="middle"
-              anchorY="middle"
+              anchorX="center"
+              anchorY="center"
             >
               Attack
             </Text>
@@ -209,8 +209,8 @@ export function TacticalCombatUI({
               position={[0, 0, 0.1]}
               fontSize={0.25}
               color="white"
-              anchorX="middle"
-              anchorY="middle"
+              anchorX="center"
+              anchorY="center"
             >
               Ability
             </Text>
@@ -226,8 +226,8 @@ export function TacticalCombatUI({
               position={[0, 0, 0.1]}
               fontSize={0.25}
               color="white"
-              anchorX="middle"
-              anchorY="middle"
+              anchorX="center"
+              anchorY="center"
             >
               End Turn
             </Text>
@@ -247,8 +247,8 @@ export function TacticalCombatUI({
             position={[0, 1.2, 0.1]}
             fontSize={0.3}
             color="white"
-            anchorX="middle"
-            anchorY="middle"
+            anchorX="center"
+            anchorY="center"
           >
             Select Ability
           </Text>
@@ -266,8 +266,8 @@ export function TacticalCombatUI({
                 position={[0, 0, 0]}
                 fontSize={0.25}
                 color="white"
-                anchorX="middle"
-                anchorY="middle"
+                anchorX="center"
+                anchorY="center"
               >
                 {`${ability.name} (Cost: ${ability.energyCost})`}
               </Text>
