@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { useGridSystem, GridCell } from '../systems/GridSystem';
-import { CombatActionType } from '../systems/CombatSystem';
-import { useGameState } from '@/lib/stores/useGameState';
+import { CombatActionType } from '@/game/systems/CombatSystem';
+import { useGridSystem, GridCell } from '@/game/systems/GridSystem';
+import { GridVisualizer } from './GridVisualizer';
 
 interface GridProps {
   selectedAction: CombatActionType | null;
@@ -11,91 +11,114 @@ interface GridProps {
 }
 
 export function Grid({ selectedAction, onCellClick }: GridProps) {
-  const { scene, raycaster, camera, pointer } = useThree();
-  const { 
-    gridState, 
-    getGridPosition, 
-    selectCell, 
-    clearSelection, 
-    highlightMovementRange, 
-    highlightAttackRange 
-  } = useGridSystem();
-  const { gamePhase } = useGameState();
+  const { scene, camera, raycaster, mouse } = useThree();
+  const { gridState } = useGridSystem();
   
-  // Reference to grid objects for raycasting
-  const gridObjectsRef = useRef<THREE.Object3D[]>([]);
+  // State to track which cell the mouse is hovering over
+  const [hoveredCell, setHoveredCell] = useState<[number, number] | null>(null);
   
-  // Handle click on grid cell
+  // Handle click on a grid cell
   const handleGridClick = (event: MouseEvent) => {
-    if (gamePhase !== 'combat') return;
-    
-    // Update mouse position for raycaster
-    raycaster.setFromCamera(pointer, camera);
-    
-    // Find intersections with grid objects
-    const intersects = raycaster.intersectObjects(gridObjectsRef.current);
-    
-    if (intersects.length > 0) {
-      const clickedObject = intersects[0].object;
-      const gridX = clickedObject.userData?.gridX;
-      const gridZ = clickedObject.userData?.gridZ;
+    // We'll use raycasting to detect which grid cell was clicked
+    if (event.target && (event.target as any).userData) {
+      const { gridX, gridZ } = (event.target as any).userData;
       
       if (gridX !== undefined && gridZ !== undefined) {
         // Get the cell data
         const cell = gridState.cells[gridX][gridZ];
         
-        // Handle cell click
-        if (cell) {
-          selectCell(gridX, gridZ);
-          console.log(`Grid cell clicked: [${gridX}, ${gridZ}]`);
-          onCellClick(cell);
-        }
+        // Call the provided click handler
+        onCellClick(cell);
       }
     }
   };
   
-  // Add event listener for clicks
+  // Set up event listeners
   useEffect(() => {
-    window.addEventListener('click', handleGridClick);
-    
-    return () => {
-      window.removeEventListener('click', handleGridClick);
-    };
-  }, [gamePhase, gridState]);
+    // Add click event listener to the canvas
+    const canvas = scene.userData.canvas;
+    if (canvas) {
+      canvas.addEventListener('click', handleGridClick);
+      
+      return () => {
+        canvas.removeEventListener('click', handleGridClick);
+      };
+    }
+  }, [scene]);
   
-  // Collect grid objects for raycasting
-  useEffect(() => {
-    // Find all grid objects in the scene
-    gridObjectsRef.current = [];
+  // Handle mouse movement to highlight hovered cell
+  const handleMouseMove = (event: PointerEvent) => {
+    // Convert mouse position to normalized device coordinates
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     
-    scene.traverse((object) => {
-      if (object instanceof THREE.Mesh && object.userData?.gridX !== undefined) {
-        gridObjectsRef.current.push(object);
+    // Update the ray with the camera and mouse position
+    raycaster.setFromCamera(mouse, camera);
+    
+    // Find intersections with grid cell meshes
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    
+    // Check if we hit a grid cell
+    if (intersects.length > 0) {
+      const hitObject = intersects[0].object;
+      
+      if (hitObject.userData && hitObject.userData.gridX !== undefined && hitObject.userData.gridZ !== undefined) {
+        const { gridX, gridZ } = hitObject.userData;
+        setHoveredCell([gridX, gridZ]);
+      } else {
+        setHoveredCell(null);
       }
-    });
-  }, [gridState, scene]);
+    } else {
+      setHoveredCell(null);
+    }
+  };
   
-  // Update grid visualization based on selected action
+  // Customize grid appearance based on selected action
   useEffect(() => {
-    if (gamePhase !== 'combat' || !selectedAction) return;
+    if (!selectedAction || !hoveredCell) return;
     
-    // Get player position from the grid
-    const playerCell = gridState.cells.flat().find(cell => cell.occupiedBy === 'player');
-    
-    if (!playerCell) return;
+    const [gridX, gridZ] = hoveredCell;
     
     // Clear previous highlights
-    clearSelection();
+    useGridSystem().clearHighlights();
     
-    // Highlight cells based on selected action
-    if (selectedAction === CombatActionType.MOVE) {
-      // Show movement range
-      highlightMovementRange(playerCell.position[0], playerCell.position[1], 3); // Movement range of 3
-    } else if (selectedAction === CombatActionType.ATTACK || selectedAction === CombatActionType.ABILITY) {
-      // Show attack range
-      highlightAttackRange(playerCell.position[0], playerCell.position[1], 2); // Attack range of 2
+    // Apply appropriate highlights based on action type
+    switch (selectedAction) {
+      case CombatActionType.MOVE:
+        // Highlight movement range from player position
+        // In a real implementation, we'd get the player's position from the store
+        // For now, just highlight around the hovered cell
+        useGridSystem().highlightMovementRange(gridX, gridZ, 3);
+        break;
+        
+      case CombatActionType.ATTACK:
+        // Highlight attack range
+        useGridSystem().highlightAttackRange(gridX, gridZ, 1);
+        break;
+        
+      case CombatActionType.ABILITY:
+        // Highlight ability range (could be different based on selected ability)
+        useGridSystem().highlightAttackRange(gridX, gridZ, 2);
+        break;
+        
+      default:
+        break;
     }
-  }, [selectedAction, gamePhase]);
+    
+    // Select the hovered cell
+    useGridSystem().selectCell(gridX, gridZ);
+    
+  }, [selectedAction, hoveredCell]);
   
-  return null; // The grid is handled by the GridSystem component
+  return (
+    <GridVisualizer 
+      gridCells={gridState.cells}
+      width={gridState.width}
+      height={gridState.height}
+      selectedCell={gridState.selectedCell}
+      highlightedCells={gridState.highlightedCells}
+      attackRangeCells={gridState.attackRangeCells}
+      pathCells={gridState.pathCells}
+    />
+  );
 }

@@ -3,6 +3,7 @@ import { CombatActionType } from '@/game/systems/CombatSystem';
 import { useCharacter } from '@/lib/stores/useCharacter';
 import { useGameState } from '@/lib/stores/useGameState';
 import { Text } from '@react-three/drei';
+import * as THREE from 'three';
 
 interface TacticalCombatUIProps {
   onActionSelected: (action: CombatActionType) => void;
@@ -33,91 +34,123 @@ export function TacticalCombatUI({
   const canAttack = isPlayerTurn && actionPoints > 0;
   const canUseAbility = isPlayerTurn && actionPoints > 0 && energy >= 10;
 
+  // Create a dark background for text
+  const createTextBackground = () => {
+    return new THREE.MeshBasicMaterial({
+      color: 'black',
+      transparent: true,
+      opacity: 0.6,
+    });
+  };
+
   return (
     <group position={[0, 0.1, 0]}>
       {/* Combat HUD - Top right - Turn & Phase Info */}
       <group position={[8, 5, -8]}>
-        <Text
-          position={[0, 0, 0]}
-          fontSize={0.4}
-          color="white"
-          anchorX="right"
-          anchorY="top"
-          backgroundColor="#00000080"
-          padding={0.1}
-        >
-          {`Turn: ${currentTurn} - ${isPlayerTurn ? 'Your Move' : 'Enemy Turn'}`}
-        </Text>
+        <group position={[0, 0, 0]}>
+          <mesh position={[0, 0, -0.01]} scale={[3, 0.5, 0.01]}>
+            <planeGeometry />
+            <meshBasicMaterial color="black" transparent opacity={0.6} />
+          </mesh>
+          <Text
+            position={[0, 0, 0]}
+            fontSize={0.4}
+            color="white"
+            anchorX="right"
+            anchorY="top"
+          >
+            {`Turn: ${currentTurn} - ${isPlayerTurn ? 'Your Move' : 'Enemy Turn'}`}
+          </Text>
+        </group>
         
-        <Text
-          position={[0, -0.5, 0]}
-          fontSize={0.3}
-          color="white"
-          anchorX="right"
-          anchorY="top"
-          backgroundColor="#00000080"
-          padding={0.1}
-        >
-          {`Phase: ${currentPhase}`}
-        </Text>
+        <group position={[0, -0.5, 0]}>
+          <mesh position={[0, 0, -0.01]} scale={[2.5, 0.4, 0.01]}>
+            <planeGeometry />
+            <meshBasicMaterial color="black" transparent opacity={0.6} />
+          </mesh>
+          <Text
+            position={[0, 0, 0]}
+            fontSize={0.3}
+            color="white"
+            anchorX="right"
+            anchorY="top"
+          >
+            {`Phase: ${currentPhase}`}
+          </Text>
+        </group>
         
-        <Text
-          position={[0, -1, 0]}
-          fontSize={0.3}
-          color="white"
-          anchorX="right"
-          anchorY="top"
-          backgroundColor="#00000080"
-          padding={0.1}
-        >
-          {`Movement: ${movementPoints} | Actions: ${actionPoints}`}
-        </Text>
+        <group position={[0, -1, 0]}>
+          <mesh position={[0, 0, -0.01]} scale={[3.2, 0.4, 0.01]}>
+            <planeGeometry />
+            <meshBasicMaterial color="black" transparent opacity={0.6} />
+          </mesh>
+          <Text
+            position={[0, 0, 0]}
+            fontSize={0.3}
+            color="white"
+            anchorX="right"
+            anchorY="top"
+          >
+            {`Movement: ${movementPoints} | Actions: ${actionPoints}`}
+          </Text>
+        </group>
       </group>
       
       {/* Combat Log - Top Left */}
       <group position={[-8, 5, -8]}>
         {combatLog.slice(-5).map((message, index) => (
-          <Text
-            key={`log-${index}`}
-            position={[0, -index * 0.5, 0]} 
-            fontSize={0.3}
-            color="white"
-            anchorX="left"
-            anchorY="top"
-            backgroundColor="#00000080"
-            maxWidth={10}
-            padding={0.1}
-          >
-            {message}
-          </Text>
+          <group key={`log-${index}`} position={[0, -index * 0.5, 0]}>
+            <mesh position={[3, 0, -0.01]} scale={[7, 0.4, 0.01]}>
+              <planeGeometry />
+              <meshBasicMaterial color="black" transparent opacity={0.6} />
+            </mesh>
+            <Text
+              position={[0, 0, 0]} 
+              fontSize={0.3}
+              color="white"
+              anchorX="left"
+              anchorY="top"
+              maxWidth={10}
+            >
+              {message}
+            </Text>
+          </group>
         ))}
       </group>
       
       {/* Player Stats - Bottom Left */}
       <group position={[-8, -4, -8]}>
-        <Text
-          position={[0, 0, 0]}
-          fontSize={0.3}
-          color="white"
-          anchorX="left"
-          anchorY="bottom"
-          backgroundColor="#00000080"
-          padding={0.1}
-        >
-          {`Health: ${health}/${maxHealth}`}
-        </Text>
+        <group position={[0, 0, 0]}>
+          <mesh position={[1.5, 0, -0.01]} scale={[3.5, 0.4, 0.01]}>
+            <planeGeometry />
+            <meshBasicMaterial color="black" transparent opacity={0.6} />
+          </mesh>
+          <Text
+            position={[0, 0, 0]}
+            fontSize={0.3}
+            color="white"
+            anchorX="left"
+            anchorY="bottom"
+          >
+            {`Health: ${health}/${maxHealth}`}
+          </Text>
+        </group>
         
-        <Text
-          position={[0, 0.5, 0]}
-          fontSize={0.3}
-          color="white"
-          anchorX="left"
-          anchorY="bottom"
-          backgroundColor="#00000080"
-          padding={0.1}
-        >
-          {`Energy: ${energy}/${maxEnergy}`}
-        </Text>
+        <group position={[0, 0.5, 0]}>
+          <mesh position={[1.5, 0, -0.01]} scale={[3.5, 0.4, 0.01]}>
+            <planeGeometry />
+            <meshBasicMaterial color="black" transparent opacity={0.6} />
+          </mesh>
+          <Text
+            position={[0, 0, 0]}
+            fontSize={0.3}
+            color="white"
+            anchorX="left"
+            anchorY="bottom"
+          >
+            {`Energy: ${energy}/${maxEnergy}`}
+          </Text>
+        </group>
       </group>
       
       {/* Action Buttons - Bottom Right */}
@@ -136,8 +169,8 @@ export function TacticalCombatUI({
               position={[0, 0, 0.1]}
               fontSize={0.25}
               color="white"
-              anchorX="center"
-              anchorY="center"
+              anchorX="middle"
+              anchorY="middle"
             >
               Move
             </Text>
@@ -156,8 +189,8 @@ export function TacticalCombatUI({
               position={[0, 0, 0.1]}
               fontSize={0.25}
               color="white"
-              anchorX="center"
-              anchorY="center"
+              anchorX="middle"
+              anchorY="middle"
             >
               Attack
             </Text>
@@ -176,8 +209,8 @@ export function TacticalCombatUI({
               position={[0, 0, 0.1]}
               fontSize={0.25}
               color="white"
-              anchorX="center"
-              anchorY="center"
+              anchorX="middle"
+              anchorY="middle"
             >
               Ability
             </Text>
@@ -193,8 +226,8 @@ export function TacticalCombatUI({
               position={[0, 0, 0.1]}
               fontSize={0.25}
               color="white"
-              anchorX="center"
-              anchorY="center"
+              anchorX="middle"
+              anchorY="middle"
             >
               End Turn
             </Text>
@@ -214,8 +247,8 @@ export function TacticalCombatUI({
             position={[0, 1.2, 0.1]}
             fontSize={0.3}
             color="white"
-            anchorX="center"
-            anchorY="center"
+            anchorX="middle"
+            anchorY="middle"
           >
             Select Ability
           </Text>
@@ -233,8 +266,8 @@ export function TacticalCombatUI({
                 position={[0, 0, 0]}
                 fontSize={0.25}
                 color="white"
-                anchorX="center"
-                anchorY="center"
+                anchorX="middle"
+                anchorY="middle"
               >
                 {`${ability.name} (Cost: ${ability.energyCost})`}
               </Text>
