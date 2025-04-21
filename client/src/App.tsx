@@ -17,6 +17,7 @@ import { Grid } from "@/game/components/Grid";
 import { TacticalCombatUI } from "@/game/components/TacticalCombatUI";
 import { GridVisualizer } from "@/game/components/GridVisualizer";
 import { EnemyStatsDisplay } from "@/game/components/EnemyStatsDisplay";
+import { CombatArena } from "@/game/components/CombatArena";
 import { useTacticalCombat } from "@/game/hooks/useTacticalCombat";
 import "@fontsource/inter";
 
@@ -79,8 +80,26 @@ function App() {
     
     console.log(`Grid cell clicked at [${cell.position[0]}, ${cell.position[1]}] with action ${activeCombatAction}`);
     
-    // In a complete implementation, we would dispatch the action to the combat system
-    // For now, just log it
+    // Dispatch the action to our tactical combat system
+    switch (activeCombatAction) {
+      case CombatActionType.MOVE:
+        // Execute movement to the grid cell position
+        executeMove([cell.position[0], 0, cell.position[1]]);
+        break;
+        
+      case CombatActionType.ATTACK:
+        // In a complete implementation, we would find an enemy at this position
+        // For now, we'll just reset the action
+        break;
+        
+      case CombatActionType.ABILITY:
+        // In a complete implementation, we would apply ability effects at this position
+        // For now, we'll just reset the action
+        break;
+        
+      default:
+        break;
+    }
     
     // Reset active action after click
     setActiveCombatAction(null);
@@ -132,12 +151,15 @@ function App() {
                   <EchoZone />
                   <Player />
                   
-                  {/* Grid visualization during combat */}
+                  {/* Combat arena and grid during combat */}
                   {gamePhase === 'combat' && (
-                    <Grid 
-                      selectedAction={activeCombatAction}
-                      onCellClick={handleGridCellClick}
-                    />
+                    <>
+                      <CombatArena />
+                      <Grid 
+                        selectedAction={activeCombatAction}
+                        onCellClick={handleGridCellClick}
+                      />
+                    </>
                   )}
                 </Suspense>
               </Canvas>
