@@ -18,6 +18,8 @@ import { TacticalCombatUI } from "@/game/components/TacticalCombatUI";
 import { GridVisualizer } from "@/game/components/GridVisualizer";
 import { EnemyStatsDisplay } from "@/game/components/EnemyStatsDisplay";
 import { CombatArena } from "@/game/components/CombatArena";
+import { CombatActionMenu } from "@/game/components/CombatActionMenu";
+import { CombatLogPanel } from "@/game/components/CombatLogPanel";
 import { useTacticalCombat } from "@/game/hooks/useTacticalCombat";
 import "@fontsource/inter";
 
@@ -165,10 +167,19 @@ function App() {
               </Canvas>
               
               {/* UI overlay */}
-              <GameUI 
-                activeCombatAction={activeCombatAction}
-                setActiveCombatAction={setActiveCombatAction}
-              />
+              {gamePhase !== 'combat' ? (
+                <GameUI 
+                  activeCombatAction={activeCombatAction}
+                  setActiveCombatAction={setActiveCombatAction}
+                />
+              ) : (
+                <>
+                  <CombatActionMenu 
+                    onActionSelected={setActiveCombatAction}
+                  />
+                  <CombatLogPanel />
+                </>
+              )}
             </>
           )}
 
