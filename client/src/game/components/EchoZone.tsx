@@ -107,7 +107,13 @@ export function EchoZone() {
         receiveShadow
       >
         <planeGeometry args={[width, depth]} />
-        {material}
+        <meshStandardMaterial 
+          color={currentZoneType === 'ObsidianDunes' ? '#222222' : 
+                 currentZoneType === 'JadeCanopy' ? '#1a472a' : 
+                 '#2a4d69'}
+          roughness={0.8}
+          metalness={0.2}
+        />
       </mesh>
     );
   }, [currentZoneData, currentZoneType]);
