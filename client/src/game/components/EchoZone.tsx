@@ -1,8 +1,10 @@
 import { useEffect, useMemo } from 'react';
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { Text } from '@react-three/drei';
 import { Echo } from './Echo';
 import { Enemy } from './Enemy';
+import { CombatTrigger } from './CombatTrigger';
 import { useEchoZone } from '@/lib/stores/useEchoZone';
 import { useGameState } from '@/lib/stores/useGameState';
 import { EchoEntity } from '@shared/types';
@@ -127,6 +129,30 @@ export function EchoZone() {
     <>
       {/* Ground plane */}
       {GroundPlane}
+      
+      {/* Combat encounter triggers */}
+      <CombatTrigger 
+        position={[5, 0, 5]} 
+        enemies={currentZoneData.enemies}
+        onTrigger={startCombat}
+      />
+      
+      {/* Additional combat triggers in different locations */}
+      {currentZoneType === 'ObsidianDunes' && (
+        <CombatTrigger 
+          position={[-8, 0, 8]} 
+          enemies={currentZoneData.enemies}
+          onTrigger={startCombat}
+        />
+      )}
+      
+      {currentZoneType === 'JadeCanopy' && (
+        <CombatTrigger 
+          position={[10, 0, -5]} 
+          enemies={currentZoneData.enemies}
+          onTrigger={startCombat}
+        />
+      )}
       
       {/* Echo entities */}
       {echoes.map((echo) => (
