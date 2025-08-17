@@ -30,7 +30,7 @@ export interface TacticalCombatState {
 
 export function useTacticalCombat() {
   const { gamePhase, inCombat, currentEnemies, endCombat, updateHealth, updateEnergy } = useGameState();
-  const { position, stats, abilities } = useCharacter();
+  const { position, stats, abilities, setPosition } = useCharacter();
   const { playHit, playSuccess } = useAudio();
   
   // Combat state
@@ -153,16 +153,24 @@ export function useTacticalCombat() {
   const executeMove = (destination: [number, number, number]) => {
     if (combatState.currentPhase !== 'move' || !combatState.isPlayerTurn) return;
     
-    // Calculate distance (simplified for turn-based grid)
-    const distance = 1; // For simplicity, each move costs 1 point
+    // Calculate Manhattan distance on grid (grid size assumed 1 unit)
+    const dx = Math.abs(Math.round(destination[0]) - Math.round(position[0]));
+    const dz = Math.abs(Math.round(destination[2]) - Math.round(position[2]));
+    const distance = dx + dz;
+    
+    if (distance <= 0) {
+      addLogMessage('You are already on this tile');
+      return;
+    }
     
     if (distance > combatState.movementPoints) {
       addLogMessage('Not enough movement points');
       return;
     }
     
-    // Player moves to new position (in a real game, we'd update the character position)
-    addLogMessage(`Moved to new position`);
+    // Move player to new position
+    setPosition([destination[0], position[1], destination[2]]);
+    addLogMessage(`Moved ${distance} tile${distance > 1 ? 's' : ''}`);
     
     // Consume movement points
     setCombatState(prev => ({
