@@ -4,6 +4,8 @@ import * as THREE from 'three';
 import { CombatActionType } from '@/game/systems/CombatSystem';
 import { useGridSystem, GridCell } from '@/game/systems/GridSystem';
 import { GridVisualizer } from './GridVisualizer';
+import { useCharacter } from '@/lib/stores/useCharacter';
+import { useTacticalCombat } from '@/game/hooks/useTacticalCombat';
 
 interface GridProps {
   selectedAction: CombatActionType | null;
@@ -12,7 +14,9 @@ interface GridProps {
 
 export function Grid({ selectedAction, onCellClick }: GridProps) {
   const { scene, camera, raycaster, mouse, gl } = useThree();
-  const { gridState, clearHighlights, highlightMovementRange, highlightAttackRange, selectCell } = useGridSystem();
+  const { gridState, clearHighlights, highlightMovementRange, highlightAttackRange, selectCell, getGridPosition, calculatePath } = useGridSystem();
+  const { position: playerPosition } = useCharacter();
+  const { combatState } = useTacticalCombat();
   
   // State to track which cell the mouse is hovering over
   const [hoveredCell, setHoveredCell] = useState<[number, number] | null>(null);
@@ -80,31 +84,43 @@ export function Grid({ selectedAction, onCellClick }: GridProps) {
     // Clear previous highlights
     clearHighlights();
     
-    // Apply appropriate highlights based on action type
+    // Determine player's current grid position
+    const playerGrid = getGridPosition(playerPosition[0], playerPosition[2]);
+    
     switch (selectedAction) {
-      case CombatActionType.MOVE:
-        // Highlight movement range from hovered cell for now
-        highlightMovementRange(gridX, gridZ, 3);
+      case CombatActionType.MOVE: {
+        if (playerGrid) {
+          const [sx, sz] = playerGrid;
+          // Show reachable cells from player within movement points
+          highlightMovementRange(sx, sz, combatState.movementPoints);
+          // Preview path to hovered cell
+          calculatePath(sx, sz, gridX, gridZ);
+          selectCell(gridX, gridZ);
+        }
         break;
-        
-      case CombatActionType.ATTACK:
-        // Highlight attack range
-        highlightAttackRange(gridX, gridZ, 1);
+      }
+      case CombatActionType.ATTACK: {
+        // Highlight attack range around player (range 1)
+        if (playerGrid) {
+          const [sx, sz] = playerGrid;
+          highlightAttackRange(sx, sz, 1);
+          selectCell(gridX, gridZ);
+        }
         break;
-        
-      case CombatActionType.ABILITY:
-        // Highlight ability range (could be different based on selected ability)
-        highlightAttackRange(gridX, gridZ, 2);
+      }
+      case CombatActionType.ABILITY: {
+        // Highlight ability range (range 2 by default)
+        if (playerGrid) {
+          const [sx, sz] = playerGrid;
+          highlightAttackRange(sx, sz, 2);
+          selectCell(gridX, gridZ);
+        }
         break;
-        
+      }
       default:
         break;
     }
-    
-    // Select the hovered cell
-    selectCell(gridX, gridZ);
-    
-  }, [selectedAction, hoveredCell, clearHighlights, highlightMovementRange, highlightAttackRange, selectCell]);
+  }, [selectedAction, hoveredCell, clearHighlights, highlightMovementRange, highlightAttackRange, selectCell, getGridPosition, playerPosition, combatState.movementPoints]);
   
   return (
     <GridVisualizer 

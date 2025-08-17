@@ -290,21 +290,78 @@ export const useGridSystem = () => {
     }));
   };
   
+  // Calculate neighbors for A*
+  const getNeighbors = (x: number, z: number): [number, number][] => {
+    const candidates: [number, number][] = [
+      [x + 1, z],
+      [x - 1, z],
+      [x, z + 1],
+      [x, z - 1],
+    ];
+    return candidates.filter(([nx, nz]) =>
+      nx >= 0 && nx < gridState.width && nz >= 0 && nz < gridState.height &&
+      gridState.cells[nx][nz].isWalkable && !gridState.cells[nx][nz].isOccupied
+    );
+  };
+  
   // Calculate and highlight a path between two grid positions using A*
   const calculatePath = (startX: number, startZ: number, endX: number, endZ: number) => {
-    // Simple implementation for now
-    const pathCells: [number, number][] = [];
+    const start = `${startX},${startZ}`;
+    const goal = `${endX},${endZ}`;
     
-    // Add start and end points for demonstration
-    pathCells.push([startX, startZ]);
-    pathCells.push([endX, endZ]);
+    const openSet = new Set<string>([start]);
+    const cameFrom = new Map<string, string>();
+    const gScore = new Map<string, number>();
+    const fScore = new Map<string, number>();
     
-    // In a real implementation, we'd use A* or another pathfinding algorithm
+    const key = (x: number, z: number) => `${x},${z}`;
+    const parse = (k: string): [number, number] => k.split(',').map(Number) as [number, number];
+    const manhattan = (a: [number, number], b: [number, number]) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
     
-    setGridState(prev => ({
-      ...prev,
-      pathCells
-    }));
+    gScore.set(start, 0);
+    fScore.set(start, manhattan([startX, startZ], [endX, endZ]));
+    
+    const reconstructPath = (currentKey: string): [number, number][] => {
+      const totalPath: [number, number][] = [parse(currentKey)];
+      while (cameFrom.has(currentKey)) {
+        currentKey = cameFrom.get(currentKey)!;
+        totalPath.unshift(parse(currentKey));
+      }
+      return totalPath;
+    };
+    
+    while (openSet.size > 0) {
+      // Select node in openSet with lowest fScore
+      let current = Array.from(openSet).reduce((best, node) => {
+        const bestScore = fScore.get(best) ?? Infinity;
+        const nodeScore = fScore.get(node) ?? Infinity;
+        return nodeScore < bestScore ? node : best;
+      });
+      const [cx, cz] = parse(current);
+      
+      if (current === goal) {
+        const path = reconstructPath(current);
+        setGridState(prev => ({ ...prev, pathCells: path }));
+        return path;
+      }
+      
+      openSet.delete(current);
+      
+      for (const [nx, nz] of getNeighbors(cx, cz)) {
+        const tentativeG = (gScore.get(current) ?? Infinity) + 1;
+        const neighborKey = key(nx, nz);
+        if (tentativeG < (gScore.get(neighborKey) ?? Infinity)) {
+          cameFrom.set(neighborKey, current);
+          gScore.set(neighborKey, tentativeG);
+          fScore.set(neighborKey, tentativeG + manhattan([nx, nz], [endX, endZ]));
+          if (!openSet.has(neighborKey)) openSet.add(neighborKey);
+        }
+      }
+    }
+    
+    // No path found
+    setGridState(prev => ({ ...prev, pathCells: [] }));
+    return [];
   };
   
   // Clear all highlights

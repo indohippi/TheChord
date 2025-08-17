@@ -8,11 +8,20 @@ import { Enemy } from '@shared/types';
 // Combat turn state management
 type CombatPhase = 'move' | 'action' | 'ability' | 'enemy' | 'end';
 
+type StatusEffectType = 'dot' | 'stun' | 'weaken';
+interface StatusEffect {
+  id: string;
+  type: StatusEffectType;
+  duration: number; // turns remaining
+  magnitude: number; // effect strength
+}
+
 interface CombatEnemy extends Enemy {
   currentHealth: number;
   position: [number, number, number];
   isSelected: boolean;
   hasTakenTurn: boolean;
+  effects: StatusEffect[];
 }
 
 export interface TacticalCombatState {
@@ -63,7 +72,8 @@ export function useTacticalCombat() {
           currentHealth: enemy.health,
           position: [position[0] + offsetX, 0, position[2] + offsetZ],
           isSelected: false,
-          hasTakenTurn: false
+          hasTakenTurn: false,
+          effects: []
         };
       });
       
@@ -80,10 +90,8 @@ export function useTacticalCombat() {
         lastAction: null
       });
       
-      // Log the start of combat
       console.log('Combat started with enemies:', initialEnemies);
     } else if (!inCombat && combatState.isActive) {
-      // Reset when combat ends
       setCombatState(prev => ({
         ...prev,
         isActive: false
@@ -98,6 +106,31 @@ export function useTacticalCombat() {
       combatLog: [...prev.combatLog, message]
     }));
     console.log(`[Combat]: ${message}`);
+  };
+  
+  // Helper: apply status effect to an enemy
+  const applyEffectToEnemy = (enemyId: string, effect: StatusEffect) => {
+    setCombatState(prev => ({
+      ...prev,
+      enemies: prev.enemies.map(e => e.id === enemyId ? { ...e, effects: [...e.effects, effect] } : e)
+    }));
+  };
+  
+  // Helper: tick effects at enemy start of turn
+  const tickEffectsOnEnemy = (enemy: CombatEnemy): CombatEnemy => {
+    let updated = { ...enemy };
+    for (const eff of updated.effects) {
+      if (eff.type === 'dot' && eff.duration > 0) {
+        const damage = eff.magnitude;
+        updated.currentHealth = Math.max(0, updated.currentHealth - damage);
+        addLogMessage(`${updated.name} suffers ${damage} damage from lingering effect.`);
+      }
+      // Other effect types can modify behavior elsewhere
+      eff.duration = Math.max(0, eff.duration - 1);
+    }
+    // Remove expired effects
+    updated.effects = updated.effects.filter(eff => eff.duration > 0);
+    return updated;
   };
   
   // Handle combat action selection
@@ -180,7 +213,6 @@ export function useTacticalCombat() {
       currentPhase: prev.movementPoints - distance <= 0 ? 'action' : 'move'
     }));
     
-    // If out of movement points, automatically switch to action phase
     if (combatState.movementPoints - distance <= 0) {
       addLogMessage('Out of movement points. Now in action phase.');
     }
@@ -190,14 +222,12 @@ export function useTacticalCombat() {
   const executeAttack = (enemyId: string) => {
     if (combatState.currentPhase !== 'action' || !combatState.isPlayerTurn) return;
     
-    // Find the target enemy
     const targetEnemy = combatState.enemies.find(enemy => enemy.id === enemyId);
     if (!targetEnemy) {
       addLogMessage('Invalid target');
       return;
     }
     
-    // Consume an action point
     setCombatState(prev => ({
       ...prev,
       actionPoints: prev.actionPoints - 1,
@@ -205,13 +235,9 @@ export function useTacticalCombat() {
       lastAction: `Attacked ${targetEnemy.name}`
     }));
     
-    // Calculate damage based on player stats
     const damage = Math.floor(stats.strength * 1.5 + Math.random() * 10);
-    
-    // Apply damage animation/sound
     playHit();
     
-    // Update enemy health
     setCombatState(prev => ({
       ...prev,
       enemies: prev.enemies.map(enemy => 
@@ -221,28 +247,19 @@ export function useTacticalCombat() {
       )
     }));
     
-    // Log the attack
     addLogMessage(`Attacked ${targetEnemy.name} for ${damage} damage!`);
     
-    // Check if enemy was defeated
     setTimeout(() => {
       setCombatState(prev => {
         const updatedEnemy = prev.enemies.find(e => e.id === enemyId);
         if (updatedEnemy && updatedEnemy.currentHealth <= 0) {
-          // Enemy defeated
           playSuccess();
           addLogMessage(`${updatedEnemy.name} was defeated!`);
-          
-          // Update enemy list
           const remainingEnemies = prev.enemies.filter(e => e.id !== enemyId || e.currentHealth > 0);
-          
-          // Check for victory
           if (remainingEnemies.length === 0) {
             addLogMessage('Victory! All enemies defeated.');
-            // End combat after delay
             setTimeout(() => endCombat(), 2000);
           }
-          
           return {
             ...prev,
             enemies: remainingEnemies,
@@ -250,16 +267,12 @@ export function useTacticalCombat() {
             currentPhase: prev.actionPoints - 1 <= 0 ? 'end' : 'action'
           };
         }
-        
-        // Enemy still alive
         return {
           ...prev,
           selectedEnemyId: null,
           currentPhase: prev.actionPoints - 1 <= 0 ? 'end' : 'action'
         };
       });
-      
-      // If out of action points, automatically end turn
       if (combatState.actionPoints - 1 <= 0) {
         addLogMessage('Out of action points.');
       }
@@ -276,20 +289,16 @@ export function useTacticalCombat() {
       return;
     }
     
-    // Find the target enemy
     const targetEnemy = combatState.enemies.find(enemy => enemy.id === targetEnemyId);
     if (!targetEnemy) {
       addLogMessage('Invalid ability target');
       return;
     }
     
-    // Check ability cost
     if (ability.energyCost > 0) {
-      // Deduct energy
       updateEnergy(-ability.energyCost);
     }
     
-    // Consume an action point
     setCombatState(prev => ({
       ...prev,
       actionPoints: prev.actionPoints - 1,
@@ -297,44 +306,56 @@ export function useTacticalCombat() {
       lastAction: `Used ${ability.name} on ${targetEnemy.name}`
     }));
     
-    // Calculate ability damage/effect based on player stats and ability
-    const baseDamage = Math.floor(stats.wisdom * 2 + Math.random() * 15);
+    // Base damage for offensive abilities
+    let baseDamage = Math.floor(stats.wisdom * 2 + Math.random() * 15);
+    let appliedEffect: StatusEffect | null = null;
     
-    // Apply ability effect
+    // Map ability ids to special effects
+    switch (ability.id) {
+      case 'serpents-embrace':
+        // DoT effect
+        appliedEffect = { id: 'serpents-dot', type: 'dot', duration: 3, magnitude: 4 + Math.floor(stats.willpower / 4) };
+        addLogMessage(`${targetEnemy.name} is afflicted with corrosive energies!`);
+        break;
+      case "avatars-strike":
+        // Stun
+        appliedEffect = { id: 'stunned', type: 'stun', duration: 1, magnitude: 0 };
+        addLogMessage(`${targetEnemy.name} is stunned and will skip its next action!`);
+        baseDamage += 6;
+        break;
+      case 'qliphoth-seal':
+        // Weaken
+        appliedEffect = { id: 'weakened', type: 'weaken', duration: 2, magnitude: 3 };
+        addLogMessage(`${targetEnemy.name} is weakened by the seal!`);
+        break;
+      default:
+        break;
+    }
+    
     playHit();
     
-    // Update enemy health
     setCombatState(prev => ({
       ...prev,
       enemies: prev.enemies.map(enemy => 
         enemy.id === targetEnemyId 
-          ? { ...enemy, currentHealth: Math.max(0, enemy.currentHealth - baseDamage) }
+          ? { ...enemy, currentHealth: Math.max(0, enemy.currentHealth - baseDamage), effects: appliedEffect ? [...enemy.effects, appliedEffect] : enemy.effects }
           : enemy
       )
     }));
     
-    // Log the ability use
     addLogMessage(`Used ${ability.name} on ${targetEnemy.name} for ${baseDamage} damage!`);
     
-    // Check if enemy was defeated (similar to attack logic)
     setTimeout(() => {
       setCombatState(prev => {
         const updatedEnemy = prev.enemies.find(e => e.id === targetEnemyId);
         if (updatedEnemy && updatedEnemy.currentHealth <= 0) {
-          // Enemy defeated by ability
           playSuccess();
           addLogMessage(`${updatedEnemy.name} was defeated by ${ability.name}!`);
-          
-          // Update enemy list
           const remainingEnemies = prev.enemies.filter(e => e.id !== targetEnemyId || e.currentHealth > 0);
-          
-          // Check for victory
           if (remainingEnemies.length === 0) {
             addLogMessage('Victory! All enemies defeated.');
-            // End combat after delay
             setTimeout(() => endCombat(), 2000);
           }
-          
           return {
             ...prev,
             enemies: remainingEnemies,
@@ -342,8 +363,6 @@ export function useTacticalCombat() {
             currentPhase: prev.actionPoints - 1 <= 0 ? 'end' : 'action'
           };
         }
-        
-        // Enemy still alive
         return {
           ...prev,
           selectedEnemyId: null,
@@ -359,7 +378,6 @@ export function useTacticalCombat() {
     
     addLogMessage('Ending your turn. Enemy phase begins...');
     
-    // Switch to enemy turn
     setCombatState(prev => ({
       ...prev,
       isPlayerTurn: false,
@@ -367,7 +385,6 @@ export function useTacticalCombat() {
       lastAction: 'Ended turn'
     }));
     
-    // Process enemy turns after a delay
     setTimeout(() => {
       processeEnemyTurns();
     }, 1000);
@@ -375,39 +392,58 @@ export function useTacticalCombat() {
   
   // Process all enemy turns
   const processeEnemyTurns = () => {
-    // For each active enemy, take a turn
     const activeEnemies = combatState.enemies.filter(enemy => !enemy.hasTakenTurn);
     
     if (activeEnemies.length === 0) {
-      // All enemies have acted, start new turn
       startNewTurn();
       return;
     }
     
-    // Process first enemy's turn
     const enemy = activeEnemies[0];
     
-    // Set as the active enemy
     setCombatState(prev => ({
       ...prev,
       selectedEnemyId: enemy.id,
       lastAction: `${enemy.name} is acting`
     }));
     
+    // Tick effects
+    let enemyAfterEffects: CombatEnemy | null = null;
+    setCombatState(prev => {
+      const updatedEnemies = prev.enemies.map(e => e.id === enemy.id ? tickEffectsOnEnemy(e) : e);
+      enemyAfterEffects = updatedEnemies.find(e => e.id === enemy.id) || null;
+      return { ...prev, enemies: updatedEnemies };
+    });
+    
+    const resolvedEnemy = enemyAfterEffects as CombatEnemy | null;
+    if (resolvedEnemy && resolvedEnemy.currentHealth <= 0) {
+      addLogMessage(`${resolvedEnemy.name} succumbs to lingering effects!`);
+      setCombatState(prev => ({
+        ...prev,
+        enemies: prev.enemies.filter(e => e.id !== resolvedEnemy!.id),
+        selectedEnemyId: null
+      }));
+      setTimeout(() => processeEnemyTurns(), 800);
+      return;
+    }
+    
     addLogMessage(`${enemy.name} is taking its turn...`);
     
-    // Simulate enemy thinking time
     setTimeout(() => {
       // Calculate damage
-      const damage = Math.floor(enemy.damage * 0.8 + Math.random() * (enemy.damage * 0.4));
+      let base = Math.floor(enemy.damage * 0.8 + Math.random() * (enemy.damage * 0.4));
+      const weakened = (resolvedEnemy?.effects || []).find(e => e.type === 'weaken');
+      if (weakened) base = Math.max(0, base - weakened.magnitude);
+      const stunned = (resolvedEnemy?.effects || []).some(e => e.type === 'stun');
       
-      // Enemy attacks player
-      playHit();
-      updateHealth(-damage);
+      if (stunned) {
+        addLogMessage(`${enemy.name} is stunned and skips the turn!`);
+      } else {
+        playHit();
+        updateHealth(-base);
+        addLogMessage(`${enemy.name} attacks for ${base} damage!`);
+      }
       
-      addLogMessage(`${enemy.name} attacks for ${damage} damage!`);
-      
-      // Mark this enemy as having taken its turn
       setCombatState(prev => ({
         ...prev,
         enemies: prev.enemies.map(e => 
@@ -416,7 +452,6 @@ export function useTacticalCombat() {
         selectedEnemyId: null
       }));
       
-      // Process next enemy turn after a delay
       setTimeout(() => {
         processeEnemyTurns();
       }, 1000);
@@ -425,7 +460,6 @@ export function useTacticalCombat() {
   
   // Start a new turn
   const startNewTurn = () => {
-    // Reset all enemies' turn status
     setCombatState(prev => ({
       ...prev,
       currentTurn: prev.currentTurn + 1,
@@ -452,12 +486,9 @@ export function useTacticalCombat() {
         )
       }));
       
-      // If in action phase, directly attack the selected enemy
       if (combatState.currentPhase === 'action') {
         executeAttack(enemyId);
       }
-      // If in ability phase, ability selection is required first,
-      // then the executeAbility function will be called
     }
   };
   
