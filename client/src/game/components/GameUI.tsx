@@ -24,6 +24,10 @@ import { useUI } from '@/lib/stores/useUI';
 import { EnhancedGameUI } from './EnhancedGameUI';
 import { useMultiplayer } from '@/lib/stores/useMultiplayer';
 import { MultiplayerUI } from './MultiplayerUI';
+import { useCrafting } from '@/lib/stores/useCrafting';
+import { CraftingUI } from './CraftingUI';
+import { useTrading } from '@/lib/stores/useTrading';
+import { TradingUI } from './TradingUI';
 import { dialogues } from '../data/dialogues';
 import { CombatActionType } from '../systems/CombatSystem';
 
@@ -70,6 +74,8 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
   const { updateEffects } = useVisualEffects();
   const { addNotification, showTooltip, showModal } = useUI();
   const { isConnected, players } = useMultiplayer();
+  const { activeSessions } = useCrafting();
+  const { unreadNotifications } = useTrading();
   
   // UI states
   const [showZoneInfo, setShowZoneInfo] = useState(true);
@@ -88,6 +94,8 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
   const [showDialogue, setShowDialogue] = useState(false);
   const [showAudioVisual, setShowAudioVisual] = useState(false);
   const [showMultiplayer, setShowMultiplayer] = useState(false);
+  const [showCrafting, setShowCrafting] = useState(false);
+  const [showTrading, setShowTrading] = useState(false);
   
   // Use props if provided, otherwise use local state
   const currentActiveCombatAction = activeCombatAction !== undefined ? activeCombatAction : localActiveCombatAction;
@@ -120,6 +128,10 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
           setShowAudioVisual(true);
         } else if (event.code === 'KeyP' && !showMultiplayer) {
           setShowMultiplayer(true);
+        } else if (event.code === 'KeyC' && !showCrafting) {
+          setShowCrafting(true);
+        } else if (event.code === 'KeyR' && !showTrading) {
+          setShowTrading(true);
         } else if (event.code === 'Escape') {
           setShowInventory(false);
           setShowCharacterSheet(false);
@@ -130,12 +142,14 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
           setShowDialogue(false);
           setShowAudioVisual(false);
           setShowMultiplayer(false);
+          setShowCrafting(false);
+          setShowTrading(false);
         }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showInventory, showCharacterSheet, showQuestLog, showSkillTree, showSaveLoad, showWorldMap, showDialogue, showAudioVisual, showMultiplayer]);
+  }, [showInventory, showCharacterSheet, showQuestLog, showSkillTree, showSaveLoad, showWorldMap, showDialogue, showAudioVisual, showMultiplayer, showCrafting, showTrading]);
   
   // Show zone info briefly when entering a zone
   useEffect(() => {
@@ -487,6 +501,14 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
         isOpen={showMultiplayer}
         onClose={() => setShowMultiplayer(false)}
       />
+      <CraftingUI
+        isOpen={showCrafting}
+        onClose={() => setShowCrafting(false)}
+      />
+      <TradingUI
+        isOpen={showTrading}
+        onClose={() => setShowTrading(false)}
+      />
 
       {/* Character Sheet UI */}
       {showCharacterSheet && (
@@ -682,6 +704,30 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
           {isConnected() && players.length > 0 && (
             <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
               {players.length}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setShowCrafting(true)}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600 relative"
+          title="Crafting (C)"
+        >
+          🔨
+          {activeSessions.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {activeSessions.length}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setShowTrading(true)}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600 relative"
+          title="Trading (R)"
+        >
+          💰
+          {unreadNotifications > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {unreadNotifications}
             </span>
           )}
         </button>
