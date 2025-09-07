@@ -113,7 +113,7 @@ const initialSkillTrees: SkillTree[] = [
         cost: 2,
         requirements: [
           {
-            type: 'skill',
+            type: 'skill' as const,
             value: 'weapon-mastery',
             description: 'Requires Weapon Mastery level 3'
           }
@@ -141,7 +141,7 @@ const initialSkillTrees: SkillTree[] = [
         cost: 2,
         requirements: [
           {
-            type: 'skill',
+            type: 'skill' as const,
             value: 'weapon-mastery',
             description: 'Requires Weapon Mastery level 3'
           }
@@ -201,7 +201,7 @@ const initialSkillTrees: SkillTree[] = [
         cost: 2,
         requirements: [
           {
-            type: 'skill',
+            type: 'skill' as const,
             value: 'energy-mastery',
             description: 'Requires Energy Mastery level 3'
           }
@@ -229,7 +229,7 @@ const initialSkillTrees: SkillTree[] = [
         cost: 3,
         requirements: [
           {
-            type: 'skill',
+            type: 'skill' as const,
             value: 'energy-mastery',
             description: 'Requires Energy Mastery level 5'
           }
@@ -291,7 +291,7 @@ const initialSkillTrees: SkillTree[] = [
         cost: 2,
         requirements: [
           {
-            type: 'skill',
+            type: 'skill' as const,
             value: 'health-mastery',
             description: 'Requires Health Mastery level 3'
           }
@@ -319,7 +319,7 @@ const initialSkillTrees: SkillTree[] = [
         cost: 2,
         requirements: [
           {
-            type: 'skill',
+            type: 'skill' as const,
             value: 'health-mastery',
             description: 'Requires Health Mastery level 3'
           }

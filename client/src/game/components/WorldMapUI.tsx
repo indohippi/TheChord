@@ -248,8 +248,8 @@ export function WorldMapUI({ isOpen, onClose }: WorldMapUIProps) {
               
               {/* Zone connections */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                {zones.forEach(zone => {
-                  zone.connections.forEach(connection => {
+                {zones.flatMap(zone => 
+                  zone.connections.map(connection => {
                     const fromZone = zones.find(z => z.id === connection.fromZone);
                     const toZone = zones.find(z => z.id === connection.toZone);
                     
@@ -285,8 +285,9 @@ export function WorldMapUI({ isOpen, onClose }: WorldMapUIProps) {
                         />
                       );
                     }
-                  });
-                })}
+                    return null;
+                  })
+                )}
               </svg>
             </div>
             

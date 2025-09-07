@@ -24,7 +24,7 @@ export const MultiplayerUI: React.FC<MultiplayerUIProps> = ({ isOpen, onClose })
     pauseSession,
     resumeSession,
     endSession,
-    sendMessage,
+    sendChatMessage,
     isHost,
     isConnected
   } = useMultiplayer();
@@ -105,7 +105,7 @@ export const MultiplayerUI: React.FC<MultiplayerUIProps> = ({ isOpen, onClose })
 
   const handleSendMessage = () => {
     if (chatInput.trim()) {
-      sendMessage(chatInput, 'global');
+      sendChatMessage(chatInput, 'global');
       setChatInput('');
     }
   };

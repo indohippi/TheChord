@@ -1,4 +1,4 @@
-import { DialogueSequence } from '../../../shared/dialogueTypes';
+import { DialogueSequence } from '@shared/dialogueTypes';
 
 export const dialogueSequences: DialogueSequence[] = [
   {
@@ -564,3 +564,5 @@ export const dialogueSequences: DialogueSequence[] = [
     ]
   }
 ];
+
+export const dialogues = dialogueSequences;

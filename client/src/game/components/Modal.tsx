@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Modal as ModalType } from '../../../shared/uiTypes';
+import { Modal as ModalType } from '@shared/uiTypes';
 
 interface ModalProps {
   modal: ModalType;

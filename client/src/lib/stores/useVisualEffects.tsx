@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { VisualEffect, VisualEffectSystem } from '../../../shared/audioTypes';
+import { VisualEffect, VisualEffectSystem } from '@shared/audioTypes';
 
 interface VisualEffectStore {
   // Visual effect system

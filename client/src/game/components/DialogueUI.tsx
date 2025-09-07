@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDialogue } from '@/lib/stores/useDialogue';
-import { DialogueNode, DialogueOption } from '../../../shared/dialogueTypes';
+import { DialogueNode, DialogueOption } from '@shared/dialogueTypes';
 
 interface DialogueUIProps {
   isOpen: boolean;

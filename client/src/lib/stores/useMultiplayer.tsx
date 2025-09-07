@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Player, GameSession, ChatMessage, LeaderboardEntry, MultiplayerEvent, ConnectionState, NetworkMessage } from '../../../shared/multiplayerTypes';
+import { Player, GameSession, ChatMessage, LeaderboardEntry, MultiplayerEvent, ConnectionState, NetworkMessage } from '@shared/multiplayerTypes';
 
 interface MultiplayerStore {
   // Connection state
@@ -39,7 +39,7 @@ interface MultiplayerStore {
   setLocalPlayer: (player: Player) => void;
   
   // Chat
-  sendMessage: (message: string, type: 'global' | 'team' | 'whisper', targetId?: string) => void;
+  sendChatMessage: (message: string, type: 'global' | 'team' | 'whisper', targetId?: string) => void;
   addChatMessage: (message: ChatMessage) => void;
   clearChat: () => void;
   
@@ -52,7 +52,7 @@ interface MultiplayerStore {
   clearEvents: () => void;
   
   // Network
-  sendMessage: (message: NetworkMessage) => void;
+  sendNetworkMessage: (message: NetworkMessage) => void;
   handleMessage: (message: NetworkMessage) => void;
   
   // Utilities
@@ -270,7 +270,7 @@ export const useMultiplayer = create<MultiplayerStore>((set, get) => ({
   },
 
   // Send chat message
-  sendMessage: (message: string, type: 'global' | 'team' | 'whisper', targetId?: string) => {
+  sendChatMessage: (message: string, type: 'global' | 'team' | 'whisper', targetId?: string) => {
     const state = get();
     if (!state.localPlayer) return;
     
@@ -329,7 +329,7 @@ export const useMultiplayer = create<MultiplayerStore>((set, get) => ({
   },
 
   // Send network message
-  sendMessage: (message: NetworkMessage) => {
+  sendNetworkMessage: (message: NetworkMessage) => {
     // Simulate sending message
     console.log('Sending message:', message);
   },

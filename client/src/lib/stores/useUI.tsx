@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Tooltip, Notification, Modal, LoadingState, Theme, AccessibilitySettings, UIState, ResponsiveBreakpoint } from '../../../shared/uiTypes';
+import { Tooltip, Notification, Modal, LoadingState, Theme, AccessibilitySettings, UIState, ResponsiveBreakpoint } from '@shared/uiTypes';
 
 interface UIStore {
   // UI state
@@ -344,7 +344,7 @@ export const useUI = create<UIStore>((set, get) => ({
   },
 
   // Get responsive value
-  getResponsiveValue: <T>(values: Record<string, T>) => {
+  getResponsiveValue: (values: Record<string, any>) => {
     const state = get();
     const breakpoint = state.uiState.breakpoint;
     return values[breakpoint] || values['desktop'] || Object.values(values)[0];

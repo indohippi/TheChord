@@ -15,7 +15,7 @@ export type SkillType =
   | 'toggle'      // Can be turned on/off
   | 'triggered';  // Triggered by specific events
 
-export type SkillRequirement = 
+export type SkillRequirementType = 
   | 'level'       // Character level requirement
   | 'stat'        // Stat requirement
   | 'skill'       // Other skill requirement
@@ -33,7 +33,7 @@ export interface SkillEffect {
 
 // Skill requirement interface
 export interface SkillRequirement {
-  type: SkillRequirement;
+  type: SkillRequirementType;
   value: string | number;   // Requirement value
   description: string;      // Human-readable description
 }

@@ -1,4 +1,4 @@
-import { CraftingMaterial, CraftingRecipe, CraftingStation, CraftingSkill } from '../../../shared/craftingTypes';
+import { CraftingMaterial, CraftingRecipe, CraftingStation, CraftingSkill } from '@shared/craftingTypes';
 
 export const craftingMaterials: CraftingMaterial[] = [
   // Ores

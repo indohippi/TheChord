@@ -25,11 +25,19 @@ interface CharacterState {
   // Character position and state
   position: [number, number, number];
   setPosition: (position: [number, number, number]) => void;
+  updatePosition: (position: [number, number, number]) => void;
+  
+  // Character facing and movement
+  facing: number;
+  setFacing: (facing: number) => void;
+  isMoving: boolean;
+  setIsMoving: (moving: boolean) => void;
   
   // Abilities
   abilities: any[];
   activeAbilityIndex: number | null;
   setActiveAbilityIndex: (index: number | null) => void;
+  useAbility: (abilityIndex: number) => void;
   
   // Character status
   isAlive: boolean;
@@ -64,6 +72,8 @@ export const useCharacter = create<CharacterState>((set, get) => ({
   skillPoints: 0,
   
   position: [0, 0, 0],
+  facing: 0,
+  isMoving: false,
   abilities: [],
   activeAbilityIndex: null,
   
@@ -162,6 +172,30 @@ export const useCharacter = create<CharacterState>((set, get) => ({
   // Set alive status
   setAlive: (alive) => set({ isAlive: alive }),
   
+  // Update position
+  updatePosition: (newPosition: [number, number, number]) => {
+    set({ position: newPosition });
+  },
+
+  // Set facing
+  setFacing: (facing: number) => {
+    set({ facing });
+  },
+
+  // Set moving state
+  setIsMoving: (moving: boolean) => {
+    set({ isMoving: moving });
+  },
+
+  // Use ability
+  useAbility: (abilityIndex: number) => {
+    const state = get();
+    if (abilityIndex >= 0 && abilityIndex < state.abilities.length) {
+      set({ activeAbilityIndex: abilityIndex });
+      // Additional ability logic can be added here
+    }
+  },
+
   // Reset character
   resetCharacter: () => {
     set({
@@ -172,6 +206,8 @@ export const useCharacter = create<CharacterState>((set, get) => ({
       experienceToNext: calculateExperienceToNext(1),
       skillPoints: 0,
       position: [0, 0, 0],
+      facing: 0,
+      isMoving: false,
       abilities: [],
       activeAbilityIndex: null,
       isAlive: true

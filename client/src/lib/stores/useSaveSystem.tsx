@@ -10,7 +10,7 @@ import {
   CloudSaveData
 } from "@shared/saveTypes";
 
-interface SaveSystemState {
+interface SaveSystemStore {
   // Save system state
   saveSystemState: SaveSystemState;
   
@@ -55,6 +55,10 @@ interface SaveSystemState {
   clearAllSaves: () => Promise<void>;
   getSaveSize: (slot: SaveSlot) => number;
   isSaveCorrupted: (slot: SaveSlot) => boolean;
+  
+  // Internal methods
+  collectSaveData: (slot: SaveSlot, characterName: string) => Promise<GameSaveData>;
+  restoreSaveData: (saveData: GameSaveData) => Promise<void>;
 }
 
 // Game version for compatibility checking
@@ -65,7 +69,7 @@ const SAVE_PREFIX = "echoes_save_";
 const BACKUP_PREFIX = "echoes_backup_";
 const SETTINGS_KEY = "echoes_settings";
 
-export const useSaveSystem = create<SaveSystemState>((set, get) => ({
+export const useSaveSystem = create<SaveSystemStore>((set, get) => ({
   // Initial state
   saveSystemState: {
     currentSlot: null,
@@ -614,11 +618,9 @@ export const useSaveSystem = create<SaveSystemState>((set, get) => ({
       });
       
       console.log("All saves cleared");
-      return true;
       
     } catch (error) {
       console.error("Clear all saves failed:", error);
-      return false;
     }
   },
   

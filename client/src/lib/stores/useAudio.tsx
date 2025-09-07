@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AudioTrack, AudioSettings, AudioState, AudioContext } from '../../../shared/audioTypes';
+import { AudioTrack, AudioSettings, AudioState, AudioContext } from '@shared/audioTypes';
 
 interface AudioStore {
   // Audio settings
@@ -31,6 +31,13 @@ interface AudioStore {
   setSfxVolume: (volume: number) => void;
   setAmbientVolume: (volume: number) => void;
   toggleMute: () => void;
+  isMuted: () => boolean;
+  playHit: () => void;
+  playSuccess: () => void;
+  playTheme: (themeId: string) => void;
+  setBackgroundMusic: (trackId: string) => void;
+  setHitSound: (soundId: string) => void;
+  setSuccessSound: (soundId: string) => void;
   fadeIn: (trackId: string, duration: number) => void;
   fadeOut: (duration: number) => void;
   crossfade: (fromTrackId: string, toTrackId: string, duration: number) => void;
@@ -385,5 +392,71 @@ export const useAudio = create<AudioStore>((set, get) => ({
   // Update current time
   updateCurrentTime: (time: number) => {
     set({ currentTime: time });
+  },
+
+  // Set SFX volume
+  setSfxVolume: (volume: number) => {
+    set(state => ({
+      settings: { ...state.settings, sfxVolume: volume }
+    }));
+  },
+
+  // Set ambient volume
+  setAmbientVolume: (volume: number) => {
+    set(state => ({
+      settings: { ...state.settings, ambientVolume: volume }
+    }));
+  },
+
+  // Toggle mute
+  toggleMute: () => {
+    set(state => ({
+      settings: { ...state.settings, muted: !state.settings.muted }
+    }));
+  },
+
+  // Check if muted
+  isMuted: () => {
+    const state = get();
+    return state.settings.muted;
+  },
+
+  // Play hit sound
+  playHit: () => {
+    // Implementation for hit sound
+    console.log('Playing hit sound');
+  },
+
+  // Play success sound
+  playSuccess: () => {
+    // Implementation for success sound
+    console.log('Playing success sound');
+  },
+
+  // Play theme
+  playTheme: (themeId: string) => {
+    const state = get();
+    const theme = state.tracks.find(t => t.id === themeId);
+    if (theme) {
+      state.playTrack(themeId);
+    }
+  },
+
+  // Set background music
+  setBackgroundMusic: (trackId: string) => {
+    const state = get();
+    state.playTrack(trackId);
+  },
+
+  // Set hit sound
+  setHitSound: (soundId: string) => {
+    // Implementation for setting hit sound
+    console.log('Setting hit sound:', soundId);
+  },
+
+  // Set success sound
+  setSuccessSound: (soundId: string) => {
+    // Implementation for setting success sound
+    console.log('Setting success sound:', soundId);
   }
 }));

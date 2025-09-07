@@ -10,6 +10,7 @@ export const mainQuests: Quest[] = [
     type: 'main',
     status: 'active',
     level: 1,
+    repeatable: false,
     prerequisites: [],
     conditions: [],
     objectives: [
@@ -54,6 +55,7 @@ export const mainQuests: Quest[] = [
     type: 'main',
     status: 'locked',
     level: 1,
+    repeatable: false,
     prerequisites: ['awakening'],
     conditions: [],
     objectives: [
@@ -114,6 +116,7 @@ export const mainQuests: Quest[] = [
     type: 'main',
     status: 'locked',
     level: 3,
+    repeatable: false,
     prerequisites: ['first-echo'],
     conditions: [],
     objectives: [
@@ -307,6 +310,7 @@ export const sideQuests: Quest[] = [
         target: 'western-chambers',
         quantity: 1,
         current: 0,
+        optional: true,
         hidden: false
       }
     ],

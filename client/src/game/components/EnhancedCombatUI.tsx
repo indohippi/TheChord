@@ -142,7 +142,7 @@ export function EnhancedCombatUI({ isOpen, onClose }: EnhancedCombatUIProps) {
     if (!selectedAction) return;
     
     try {
-      const result = await processTurn(selectedAction, selectedTarget, selectedPosition || undefined);
+      const result = await processTurn(selectedAction, selectedTarget, selectedPosition ? [...selectedPosition, 0] : undefined);
       console.log('Combat result:', result);
       
       // Reset selections

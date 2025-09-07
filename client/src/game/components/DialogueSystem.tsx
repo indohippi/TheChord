@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useGameState } from '@/lib/stores/useGameState';
-import { DialogSequence, DialogNode } from '@shared/types';
+import { DialogueSequence, DialogueNode } from '@shared/dialogueTypes';
 
 interface DialogueSystemProps {
-  dialogueSequence: DialogSequence;
+  dialogueSequence: DialogueSequence | null;
 }
 
 export function DialogueSystem({ dialogueSequence }: DialogueSystemProps) {
   const { setGamePhase } = useGameState();
   
   // Current dialog node state
-  const [currentNodeId, setCurrentNodeId] = useState<string>(dialogueSequence.startNodeId);
-  const [currentNode, setCurrentNode] = useState<DialogNode | null>(null);
+  const [currentNodeId, setCurrentNodeId] = useState<string>(dialogueSequence?.startNodeId || '');
+  const [currentNode, setCurrentNode] = useState<DialogueNode | null>(null);
   const [isTyping, setIsTyping] = useState(true);
   const [displayedText, setDisplayedText] = useState('');
   const [textIndex, setTextIndex] = useState(0);
@@ -47,7 +47,7 @@ export function DialogueSystem({ dialogueSequence }: DialogueSystemProps) {
       return;
     }
     
-    const node = dialogueSequence.nodes[currentNodeId];
+    const node = dialogueSequence?.nodes.find(n => n.id === currentNodeId);
     if (node) {
       setCurrentNode(node);
     } else {
@@ -105,7 +105,7 @@ export function DialogueSystem({ dialogueSequence }: DialogueSystemProps) {
       {/* Options or continue */}
       {!isTyping && currentNode.options ? (
         <div className="flex flex-col gap-2">
-          {currentNode.options.map((option, index) => (
+          {currentNode.options.map((option: any, index: number) => (
             <button 
               key={index}
               className="text-left bg-gray-800 hover:bg-gray-700 p-2 text-gray-200 border border-gray-700"

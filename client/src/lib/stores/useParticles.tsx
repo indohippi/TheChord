@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ParticleEffect, ParticleSystem } from '../../../shared/audioTypes';
+import { ParticleEffect, ParticleSystem } from '@shared/audioTypes';
 
 interface ParticleStore {
   // Particle system

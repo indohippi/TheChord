@@ -440,7 +440,7 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
       
       {/* Dialog system - active only during dialogue phase */}
       {gamePhase === 'dialogue' && (
-        <DialogueSystem dialogueSequence={dialogues['intro']} />
+        <DialogueSystem dialogueSequence={dialogues.find(d => d.id === 'intro') || null} />
       )}
       
       {/* Game over screen */}

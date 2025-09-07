@@ -1,4 +1,4 @@
-import { AudioTrack } from '../../../shared/audioTypes';
+import { AudioTrack } from '@shared/audioTypes';
 
 export const audioTracks: AudioTrack[] = [
   // Music tracks

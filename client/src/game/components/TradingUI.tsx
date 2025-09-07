@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTrading } from '@/lib/stores/useTrading';
 import { useUI } from '@/lib/stores/useUI';
-import { TradeOffer, TradeRequest } from '../../../shared/tradingTypes';
+import { TradeOffer, TradeRequest } from '@shared/tradingTypes';
 
 interface TradingUIProps {
   isOpen: boolean;

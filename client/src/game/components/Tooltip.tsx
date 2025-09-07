@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Tooltip as TooltipType } from '../../../shared/uiTypes';
+import { Tooltip as TooltipType } from '@shared/uiTypes';
 
 interface TooltipProps {
   tooltip: TooltipType;

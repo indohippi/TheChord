@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { DialogueSequence, DialogueNode, CharacterRelationship, DialogueFlag, DialogueHistory, DialogueCondition, DialogueEffect } from '../../../shared/dialogueTypes';
+import { DialogueSequence, DialogueNode, CharacterRelationship, DialogueFlag, DialogueHistory, DialogueCondition, DialogueEffect } from '@shared/dialogueTypes';
 import { useQuest } from './useQuest';
 import { useInventory } from './useInventory';
 import { useCharacter } from './useCharacter';

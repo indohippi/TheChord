@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Howl } from 'howler';
+import { Howl, Howler } from 'howler';
 import { useGameState } from '@/lib/stores/useGameState';
 import { useEchoZone } from '@/lib/stores/useEchoZone';
 import { useAudio } from '@/lib/stores/useAudio';
@@ -41,15 +41,15 @@ export function SoundManager() {
     });
     
     // Add to audio store
-    setBackgroundMusic(bgMusic as unknown as HTMLAudioElement);
-    setHitSound(hitSfx as unknown as HTMLAudioElement);
-    setSuccessSound(successSfx as unknown as HTMLAudioElement);
+    setBackgroundMusic('main_theme');
+    setHitSound('hit_sound');
+    setSuccessSound('success_sound');
     
     // Store current BGM for management
     setCurrentBgm(bgMusic);
     
     // Set initial mute state based on store
-    if (isMuted) {
+    if (isMuted()) {
       Howler.mute(true);
     }
     
@@ -102,10 +102,10 @@ export function SoundManager() {
       className="fixed top-4 right-4 z-50 w-10 h-10 flex items-center justify-center bg-gray-800 bg-opacity-80 text-white rounded-full hover:bg-gray-700"
       onClick={() => {
         toggleMute();
-        Howler.mute(!isMuted);
+        Howler.mute(!isMuted());
       }}
     >
-      {isMuted ? (
+      {isMuted() ? (
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="1" y1="1" x2="23" y2="23"></line>

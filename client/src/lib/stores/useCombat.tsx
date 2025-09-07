@@ -21,7 +21,12 @@ interface CombatStore {
   // Actions
   startCombat: (entities: CombatEntity[], area: any) => void;
   endCombat: () => void;
-  processTurn: (action: string, target?: string, position?: [number, number]) => Promise<CombatResult>;
+  processTurn: (action: string, target?: string, position?: [number, number, number]) => Promise<CombatResult>;
+  processAttack: (sourceId: string, targetId: string) => Promise<CombatResult>;
+  processAbility: (sourceId: string, targetId: string) => Promise<CombatResult>;
+  processMove: (sourceId: string, position: [number, number, number]) => Promise<CombatResult>;
+  processDefend: (sourceId: string) => Promise<CombatResult>;
+  processItem: (sourceId: string, itemId: string) => Promise<CombatResult>;
   
   // Entity management
   addEntity: (entity: CombatEntity) => void;
@@ -781,6 +786,81 @@ export const useCombat = create<CombatStore>((set, get) => ({
     return {
       success: true,
       message: "Item used"
+    };
+  },
+
+  // Get status effects for entity
+  getStatusEffects: (entityId: string) => {
+    const state = get();
+    const entity = state.combatState.entities.find(e => e.id === entityId);
+    return entity?.statusEffects || [];
+  },
+
+  // Process attack
+  processAttack: async (sourceId: string, targetId: string) => {
+    const state = get();
+    const source = state.getEntity(sourceId);
+    const target = state.getEntity(targetId);
+    
+    if (!source || !target) {
+      return { success: false, message: "Invalid entities" };
+    }
+    
+    // Calculate damage
+    const damage = state.calculateDamage(source, target, 10, 'physical');
+    state.applyDamage(targetId, damage);
+    
+    return {
+      success: true,
+      message: `${source.name} attacks ${target.name} for ${damage.total} damage`
+    };
+  },
+
+  // Process ability
+  processAbility: async (sourceId: string, targetId: string) => {
+    const state = get();
+    const source = state.getEntity(sourceId);
+    const target = state.getEntity(targetId);
+    
+    if (!source || !target) {
+      return { success: false, message: "Invalid entities" };
+    }
+    
+    return {
+      success: true,
+      message: `${source.name} uses ability on ${target.name}`
+    };
+  },
+
+  // Process move
+  processMove: async (sourceId: string, position: [number, number, number]) => {
+    const state = get();
+    const entity = state.getEntity(sourceId);
+    
+    if (!entity) {
+      return { success: false, message: "Invalid entity" };
+    }
+    
+    state.updateEntity(sourceId, { position });
+    
+    return {
+      success: true,
+      message: `${entity.name} moves to new position`
+    };
+  },
+
+  // Process defend
+  processDefend: async (sourceId: string) => {
+    const state = get();
+    const entity = state.getEntity(sourceId);
+    
+    if (!entity) {
+      return { success: false, message: "Invalid entity" };
+    }
+    
+    return {
+      success: true,
+      message: `${entity.name} takes a defensive stance`
     };
   }
 }));

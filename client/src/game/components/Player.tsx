@@ -77,22 +77,22 @@ export function Player() {
     // Handle movement
     if (forward) {
       newZ -= MOVE_SPEED;
-      setFacing('north');
+      setFacing(0);
       isCurrentlyMoving = true;
     } 
     if (backward) {
       newZ += MOVE_SPEED;
-      setFacing('south');
+      setFacing(Math.PI);
       isCurrentlyMoving = true;
     }
     if (left) {
       newX -= MOVE_SPEED;
-      setFacing('west');
+      setFacing(-Math.PI / 2);
       isCurrentlyMoving = true;
     }
     if (right) {
       newX += MOVE_SPEED;
-      setFacing('east');
+      setFacing(Math.PI / 2);
       isCurrentlyMoving = true;
     }
     

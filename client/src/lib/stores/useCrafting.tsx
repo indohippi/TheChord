@@ -8,7 +8,7 @@ import {
   CraftingQueue, 
   CraftingDiscovery, 
   CraftingMarket 
-} from '../../../shared/craftingTypes';
+} from '@shared/craftingTypes';
 
 interface CraftingStore {
   // Materials

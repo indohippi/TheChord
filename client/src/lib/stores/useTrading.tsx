@@ -9,7 +9,7 @@ import {
   TradeNotification, 
   TradeSearchFilters, 
   TradeAnalytics 
-} from '../../../shared/tradingTypes';
+} from '@shared/tradingTypes';
 
 interface TradingStore {
   // Offers

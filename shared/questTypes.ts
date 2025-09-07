@@ -57,7 +57,7 @@ export interface QuestObjective {
 // Quest reward interface
 export interface QuestReward {
   type: QuestRewardType;
-  value: number;            // Amount or item ID
+  value: string | number;   // Amount or item ID
   quantity?: number;        // For items
   description: string;      // Description of the reward
 }

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AnimationState, AnimationKeyframe, AnimationSystem } from '../../../shared/audioTypes';
+import { AnimationState, AnimationKeyframe, AnimationSystem } from '@shared/audioTypes';
 
 interface AnimationStore {
   // Animation system

@@ -160,7 +160,7 @@ export const EnhancedGameUI: React.FC<EnhancedGameUIProps> = ({ children }) => {
       <LoadingSpinner loading={uiState.loading} />
       
       {/* Global Styles */}
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         .enhanced-game-ui {
           --color-primary: var(--color-primary, #3B82F6);
           --color-secondary: var(--color-secondary, #6B7280);
@@ -237,7 +237,7 @@ export const EnhancedGameUI: React.FC<EnhancedGameUIProps> = ({ children }) => {
             --spacing-xl: 1.5rem;
           }
         }
-      `}</style>
+      ` }} />
     </div>
   );
 };

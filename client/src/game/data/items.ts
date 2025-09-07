@@ -470,9 +470,9 @@ export const consumables: Consumable[] = [
       type: 'buff',
       value: 10,
       stat: 'harmony',
-      target: 'self',
-      duration: 300
+      target: 'self'
     },
+    duration: 300,
     cooldown: 30
   },
   {

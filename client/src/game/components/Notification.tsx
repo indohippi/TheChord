@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Notification as NotificationType } from '../../../shared/uiTypes';
+import { Notification as NotificationType } from '@shared/uiTypes';
 
 interface NotificationProps {
   notification: NotificationType;

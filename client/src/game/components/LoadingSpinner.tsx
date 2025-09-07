@@ -1,5 +1,5 @@
 import React from 'react';
-import { LoadingState } from '../../../shared/uiTypes';
+import { LoadingState } from '@shared/uiTypes';
 
 interface LoadingSpinnerProps {
   loading: LoadingState;
