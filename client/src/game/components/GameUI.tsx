@@ -2,7 +2,28 @@ import { useState, useEffect } from 'react';
 import { useCharacter } from '@/lib/stores/useCharacter';
 import { useGameState } from '@/lib/stores/useGameState';
 import { useEchoZone } from '@/lib/stores/useEchoZone';
+import { useInventory } from '@/lib/stores/useInventory';
+import { useQuest } from '@/lib/stores/useQuest';
+import { useSkills } from '@/lib/stores/useSkills';
+import { useSaveSystem } from '@/lib/stores/useSaveSystem';
+import { useWorld } from '@/lib/stores/useWorld';
 import { DialogueSystem } from './DialogueSystem';
+import { InventoryUI } from './InventoryUI';
+import { QuestUI } from './QuestUI';
+import { SkillTreeUI } from './SkillTreeUI';
+import { SaveLoadUI } from './SaveLoadUI';
+import { WorldMapUI } from './WorldMapUI';
+import { useDialogue } from '@/lib/stores/useDialogue';
+import { DialogueUI } from './DialogueUI';
+import { useAudio } from '@/lib/stores/useAudio';
+import { useParticles } from '@/lib/stores/useParticles';
+import { useAnimations } from '@/lib/stores/useAnimations';
+import { useVisualEffects } from '@/lib/stores/useVisualEffects';
+import { AudioVisualUI } from './AudioVisualUI';
+import { useUI } from '@/lib/stores/useUI';
+import { EnhancedGameUI } from './EnhancedGameUI';
+import { useMultiplayer } from '@/lib/stores/useMultiplayer';
+import { MultiplayerUI } from './MultiplayerUI';
 import { dialogues } from '../data/dialogues';
 import { CombatActionType } from '../systems/CombatSystem';
 
@@ -12,7 +33,18 @@ interface GameUIProps {
 }
 
 export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProps) {
-  const { selectedClass, stats, abilities, activeAbilityIndex, useAbility } = useCharacter();
+  const { 
+    selectedClass, 
+    stats, 
+    abilities, 
+    activeAbilityIndex, 
+    useAbility,
+    level,
+    experience,
+    experienceToNext,
+    skillPoints,
+    addExperience
+  } = useCharacter();
   const { 
     gamePhase, 
     health, 
@@ -26,6 +58,18 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
     resetGame
   } = useGameState();
   const { currentZoneData } = useEchoZone();
+  const { gold, echoes } = useInventory();
+  const { questLog, getActiveQuests } = useQuest();
+  const { availableSkillPoints, getLearnedSkills } = useSkills();
+  const { performAutoSave } = useSaveSystem();
+  const { getWorldStats } = useWorld();
+  const { isDialogueActive, startDialogue, addSequence } = useDialogue();
+  const { initializeAudio } = useAudio();
+  const { updateParticles } = useParticles();
+  const { updateAnimations } = useAnimations();
+  const { updateEffects } = useVisualEffects();
+  const { addNotification, showTooltip, showModal } = useUI();
+  const { isConnected, players } = useMultiplayer();
   
   // UI states
   const [showZoneInfo, setShowZoneInfo] = useState(true);
@@ -34,10 +78,64 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
   const [combatTurn, setCombatTurn] = useState<number>(1);
   const [isPlayerTurn, setIsPlayerTurn] = useState<boolean>(true);
   const [activeEntity, setActiveEntity] = useState<string>('player');
+  const [showInventory, setShowInventory] = useState(false);
+  const [showCharacterSheet, setShowCharacterSheet] = useState(false);
+  const [showQuestLog, setShowQuestLog] = useState(false);
+  const [showSkillTree, setShowSkillTree] = useState(false);
+  const [showSaveLoad, setShowSaveLoad] = useState(false);
+  const [saveLoadMode, setSaveLoadMode] = useState<'save' | 'load'>('save');
+  const [showWorldMap, setShowWorldMap] = useState(false);
+  const [showDialogue, setShowDialogue] = useState(false);
+  const [showAudioVisual, setShowAudioVisual] = useState(false);
+  const [showMultiplayer, setShowMultiplayer] = useState(false);
   
   // Use props if provided, otherwise use local state
   const currentActiveCombatAction = activeCombatAction !== undefined ? activeCombatAction : localActiveCombatAction;
   const updateActiveCombatAction = setActiveCombatAction || setLocalActiveCombatAction;
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === 'KeyI' && !showInventory) {
+        setShowInventory(true);
+      } else if (event.code === 'KeyC' && !showCharacterSheet) {
+        setShowCharacterSheet(true);
+      } else if (event.code === 'KeyQ' && !showQuestLog) {
+        setShowQuestLog(true);
+      } else if (event.code === 'KeyT' && !showSkillTree) {
+        setShowSkillTree(true);
+      } else if (event.code === 'KeyS' && event.ctrlKey) {
+        event.preventDefault();
+        setSaveLoadMode('save');
+        setShowSaveLoad(true);
+        } else if (event.code === 'KeyL' && event.ctrlKey) {
+          event.preventDefault();
+          setSaveLoadMode('load');
+          setShowSaveLoad(true);
+        } else if (event.code === 'KeyM' && !showWorldMap) {
+          setShowWorldMap(true);
+        } else if (event.code === 'KeyD' && !showDialogue) {
+          setShowDialogue(true);
+        } else if (event.code === 'KeyV' && !showAudioVisual) {
+          setShowAudioVisual(true);
+        } else if (event.code === 'KeyP' && !showMultiplayer) {
+          setShowMultiplayer(true);
+        } else if (event.code === 'Escape') {
+          setShowInventory(false);
+          setShowCharacterSheet(false);
+          setShowQuestLog(false);
+          setShowSkillTree(false);
+          setShowSaveLoad(false);
+          setShowWorldMap(false);
+          setShowDialogue(false);
+          setShowAudioVisual(false);
+          setShowMultiplayer(false);
+        }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showInventory, showCharacterSheet, showQuestLog, showSkillTree, showSaveLoad, showWorldMap, showDialogue, showAudioVisual, showMultiplayer]);
   
   // Show zone info briefly when entering a zone
   useEffect(() => {
@@ -50,6 +148,30 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
       return () => clearTimeout(timer);
     }
   }, [currentZoneData]);
+
+  // Initialize dialogue sequences
+  useEffect(() => {
+    dialogues.forEach(dialogue => {
+      addSequence(dialogue);
+    });
+  }, [addSequence]);
+
+  // Initialize audio system
+  useEffect(() => {
+    initializeAudio();
+  }, [initializeAudio]);
+
+  // Update audio/visual systems
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const deltaTime = 1/60; // 60 FPS
+      updateParticles(deltaTime);
+      updateAnimations(deltaTime);
+      updateEffects(deltaTime);
+    }, 1000/60);
+
+    return () => clearInterval(interval);
+  }, [updateParticles, updateAnimations, updateEffects]);
   
   // Handle ability use
   const handleAbilityClick = (abilityIndex: number) => {
@@ -133,7 +255,7 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
   };
   
   return (
-    <>
+    <EnhancedGameUI>
       {/* Zone information overlay */}
       {showZoneInfo && currentZoneData && (
         <div className="fixed top-1/4 left-1/2 transform -translate-x-1/2 bg-gray-900 bg-opacity-80 text-white p-6 text-center rounded-lg border border-blue-500 transition-opacity duration-500">
@@ -162,7 +284,10 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
           <div className="mr-4">
             <div className="text-white font-bold">{selectedClass}</div>
             <div className="text-gray-400 text-xs">
-              Echoes: {echoesCaptured} | Zone: {currentZoneData?.name.split(' ')[1] || '???'}
+              Level {level} | Echoes: {echoesCaptured} | Zone: {currentZoneData?.name.split(' ')[1] || '???'}
+            </div>
+            <div className="text-gray-500 text-xs">
+              XP: {experience}/{experienceToNext} | SP: {skillPoints}
             </div>
           </div>
           
@@ -321,6 +446,246 @@ export function GameUI({ activeCombatAction, setActiveCombatAction }: GameUIProp
           </div>
         </div>
       )}
-    </>
+
+      {/* Inventory UI */}
+      <InventoryUI 
+        isOpen={showInventory} 
+        onClose={() => setShowInventory(false)} 
+      />
+
+      {/* Quest UI */}
+      <QuestUI 
+        isOpen={showQuestLog} 
+        onClose={() => setShowQuestLog(false)} 
+      />
+
+      {/* Skill Tree UI */}
+      <SkillTreeUI 
+        isOpen={showSkillTree} 
+        onClose={() => setShowSkillTree(false)} 
+      />
+
+      {/* Save/Load UI */}
+      <SaveLoadUI
+        isOpen={showSaveLoad}
+        onClose={() => setShowSaveLoad(false)}
+        mode={saveLoadMode}
+      />
+      <WorldMapUI
+        isOpen={showWorldMap}
+        onClose={() => setShowWorldMap(false)}
+      />
+      <DialogueUI
+        isOpen={showDialogue || isDialogueActive}
+        onClose={() => setShowDialogue(false)}
+      />
+      <AudioVisualUI
+        isOpen={showAudioVisual}
+        onClose={() => setShowAudioVisual(false)}
+      />
+      <MultiplayerUI
+        isOpen={showMultiplayer}
+        onClose={() => setShowMultiplayer(false)}
+      />
+
+      {/* Character Sheet UI */}
+      {showCharacterSheet && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 border-2 border-blue-500 rounded-lg p-6 w-11/12 max-w-4xl h-5/6 overflow-hidden">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-blue-300">Character Sheet</h2>
+              <button
+                onClick={() => setShowCharacterSheet(false)}
+                className="text-gray-400 hover:text-white text-2xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
+              {/* Character Info */}
+              <div className="space-y-4">
+                <div className="border border-gray-600 rounded p-4">
+                  <h3 className="text-lg font-bold text-blue-300 mb-2">Character Info</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Class:</span>
+                      <span className="font-bold">{selectedClass}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Level:</span>
+                      <span className="font-bold">{level}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Experience:</span>
+                      <span className="font-bold">{experience}/{experienceToNext}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Skill Points:</span>
+                      <span className="font-bold text-yellow-400">{skillPoints}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="border border-gray-600 rounded p-4">
+                  <h3 className="text-lg font-bold text-blue-300 mb-2">Stats</h3>
+                  <div className="space-y-2 text-sm">
+                    {Object.entries(stats).map(([stat, value]) => (
+                      <div key={stat} className="flex justify-between">
+                        <span className="capitalize">{stat}:</span>
+                        <span className="font-bold">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Currency */}
+                <div className="border border-gray-600 rounded p-4">
+                  <h3 className="text-lg font-bold text-blue-300 mb-2">Currency</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Gold:</span>
+                      <span className="font-bold text-yellow-400">{gold}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Echoes:</span>
+                      <span className="font-bold text-purple-400">{echoes}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Abilities */}
+              <div className="space-y-4">
+                <div className="border border-gray-600 rounded p-4">
+                  <h3 className="text-lg font-bold text-blue-300 mb-2">Abilities</h3>
+                  <div className="space-y-2">
+                    {abilities.map((ability, index) => (
+                      <div key={ability.id} className="bg-gray-800 p-3 rounded border border-gray-700">
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-blue-300">{ability.name}</span>
+                          <span className="text-xs text-gray-400">Cost: {ability.energyCost}</span>
+                        </div>
+                        <p className="text-sm text-gray-300 mt-1">{ability.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Experience Bar */}
+                <div className="border border-gray-600 rounded p-4">
+                  <h3 className="text-lg font-bold text-blue-300 mb-2">Experience Progress</h3>
+                  <div className="w-full bg-gray-700 rounded-full h-4">
+                    <div 
+                      className="bg-blue-500 h-4 rounded-full transition-all duration-300"
+                      style={{ width: `${(experience / experienceToNext) * 100}%` }}
+                    />
+                  </div>
+                  <div className="text-sm text-gray-400 mt-1 text-center">
+                    {experience} / {experienceToNext} XP
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Access Buttons */}
+      <div className="fixed top-4 right-4 flex gap-2 z-40">
+        <button
+          onClick={() => setShowInventory(true)}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600"
+          title="Inventory (I)"
+        >
+          🎒
+        </button>
+        <button
+          onClick={() => setShowCharacterSheet(true)}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600"
+          title="Character Sheet (C)"
+        >
+          👤
+        </button>
+        <button
+          onClick={() => setShowQuestLog(true)}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600 relative"
+          title="Quest Log (Q)"
+        >
+          📋
+          {getActiveQuests().length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {getActiveQuests().length}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setShowSkillTree(true)}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600 relative"
+          title="Skill Tree (T)"
+        >
+          🌟
+          {availableSkillPoints > 0 && (
+            <span className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {availableSkillPoints}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => {
+            setSaveLoadMode('save');
+            setShowSaveLoad(true);
+          }}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600"
+          title="Save Game (Ctrl+S)"
+        >
+          💾
+        </button>
+        <button
+          onClick={() => {
+            setSaveLoadMode('load');
+            setShowSaveLoad(true);
+          }}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600"
+          title="Load Game (Ctrl+L)"
+        >
+          📁
+        </button>
+        <button
+          onClick={() => setShowWorldMap(true)}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600"
+          title="World Map (M)"
+        >
+          🗺️
+        </button>
+        <button
+          onClick={() => setShowDialogue(true)}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600"
+          title="Dialogue (D)"
+        >
+          💬
+        </button>
+        <button
+          onClick={() => setShowAudioVisual(true)}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600"
+          title="Audio & Visual (V)"
+        >
+          🎵
+        </button>
+        <button
+          onClick={() => setShowMultiplayer(true)}
+          className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded border border-gray-600 relative"
+          title="Multiplayer (P)"
+        >
+          🌐
+          {isConnected() && players.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {players.length}
+            </span>
+          )}
+        </button>
+      </div>
+    </EnhancedGameUI>
   );
 }

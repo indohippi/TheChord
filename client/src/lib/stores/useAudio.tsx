@@ -1,74 +1,389 @@
-import { create } from "zustand";
+import { create } from 'zustand';
+import { AudioTrack, AudioSettings, AudioState, AudioContext } from '../../../shared/audioTypes';
 
-interface AudioState {
-  backgroundMusic: HTMLAudioElement | null;
-  hitSound: HTMLAudioElement | null;
-  successSound: HTMLAudioElement | null;
-  isMuted: boolean;
+interface AudioStore {
+  // Audio settings
+  settings: AudioSettings;
   
-  // Setter functions
-  setBackgroundMusic: (music: HTMLAudioElement) => void;
-  setHitSound: (sound: HTMLAudioElement) => void;
-  setSuccessSound: (sound: HTMLAudioElement) => void;
+  // Audio context
+  audioContext: AudioContext;
   
-  // Control functions
+  // Current audio state
+  currentTrack: AudioTrack | null;
+  isPlaying: boolean;
+  isPaused: boolean;
+  currentTime: number;
+  duration: number;
+  
+  // Audio tracks
+  tracks: AudioTrack[];
+  
+  // Actions
+  initializeAudio: () => void;
+  loadTrack: (track: AudioTrack) => void;
+  playTrack: (trackId: string) => void;
+  pauseTrack: () => void;
+  resumeTrack: () => void;
+  stopTrack: () => void;
+  setVolume: (volume: number) => void;
+  setMasterVolume: (volume: number) => void;
+  setMusicVolume: (volume: number) => void;
+  setSfxVolume: (volume: number) => void;
+  setAmbientVolume: (volume: number) => void;
   toggleMute: () => void;
-  playHit: () => void;
-  playSuccess: () => void;
+  fadeIn: (trackId: string, duration: number) => void;
+  fadeOut: (duration: number) => void;
+  crossfade: (fromTrackId: string, toTrackId: string, duration: number) => void;
+  
+  // Track management
+  addTrack: (track: AudioTrack) => void;
+  removeTrack: (trackId: string) => void;
+  getTrack: (trackId: string) => AudioTrack | null;
+  getTracksByType: (type: 'music' | 'sfx' | 'ambient') => AudioTrack[];
+  
+  // Playback control
+  seek: (time: number) => void;
+  setLoop: (loop: boolean) => void;
+  updateCurrentTime: (time: number) => void;
 }
 
-export const useAudio = create<AudioState>((set, get) => ({
-  backgroundMusic: null,
-  hitSound: null,
-  successSound: null,
-  isMuted: true, // Start muted by default
+export const useAudio = create<AudioStore>((set, get) => ({
+  // Initial state
+  settings: {
+    masterVolume: 0.7,
+    musicVolume: 0.6,
+    sfxVolume: 0.8,
+    ambientVolume: 0.5,
+    muted: false
+  },
   
-  setBackgroundMusic: (music) => set({ backgroundMusic: music }),
-  setHitSound: (sound) => set({ hitSound: sound }),
-  setSuccessSound: (sound) => set({ successSound: sound }),
+  audioContext: {
+    audioContext: null,
+    gainNode: null,
+    musicGain: null,
+    sfxGain: null,
+    ambientGain: null,
+    isInitialized: false
+  },
   
+  currentTrack: null,
+  isPlaying: false,
+  isPaused: false,
+  currentTime: 0,
+  duration: 0,
+  tracks: [],
+
+  // Initialize audio context
+  initializeAudio: () => {
+    const state = get();
+    if (state.audioContext.isInitialized) return;
+
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const gainNode = audioContext.createGain();
+      const musicGain = audioContext.createGain();
+      const sfxGain = audioContext.createGain();
+      const ambientGain = audioContext.createGain();
+
+      // Connect gain nodes
+      musicGain.connect(gainNode);
+      sfxGain.connect(gainNode);
+      ambientGain.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Set initial volumes
+      gainNode.gain.value = state.settings.masterVolume;
+      musicGain.gain.value = state.settings.musicVolume;
+      sfxGain.gain.value = state.settings.sfxVolume;
+      ambientGain.gain.value = state.settings.ambientVolume;
+
+      set({
+        audioContext: {
+          audioContext,
+          gainNode,
+          musicGain,
+          sfxGain,
+          ambientGain,
+          isInitialized: true
+        }
+      });
+    } catch (error) {
+      console.error('Failed to initialize audio context:', error);
+    }
+  },
+
+  // Load audio track
+  loadTrack: (track: AudioTrack) => {
+    set(state => ({
+      tracks: [...state.tracks.filter(t => t.id !== track.id), track]
+    }));
+  },
+
+  // Play track
+  playTrack: (trackId: string) => {
+    const state = get();
+    const track = state.tracks.find(t => t.id === trackId);
+    
+    if (!track || !state.audioContext.isInitialized) return;
+
+    // Stop current track if playing
+    if (state.currentTrack && state.isPlaying) {
+      state.stopTrack();
+    }
+
+    // Create audio element
+    const audio = new Audio(track.url);
+    audio.volume = track.volume;
+    audio.loop = track.loop;
+
+    // Set up event listeners
+    audio.addEventListener('loadedmetadata', () => {
+      set({ duration: audio.duration });
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      set({ currentTime: audio.currentTime });
+    });
+
+    audio.addEventListener('ended', () => {
+      if (!track.loop) {
+        set({
+          isPlaying: false,
+          currentTrack: null,
+          currentTime: 0
+        });
+      }
+    });
+
+    // Play the track
+    audio.play().then(() => {
+      set({
+        currentTrack: track,
+        isPlaying: true,
+        isPaused: false,
+        currentTime: 0
+      });
+    }).catch(error => {
+      console.error('Failed to play track:', error);
+    });
+  },
+
+  // Pause track
+  pauseTrack: () => {
+    const state = get();
+    if (state.currentTrack && state.isPlaying) {
+      const audio = document.querySelector('audio') as HTMLAudioElement;
+      if (audio) {
+        audio.pause();
+        set({ isPaused: true, isPlaying: false });
+      }
+    }
+  },
+
+  // Resume track
+  resumeTrack: () => {
+    const state = get();
+    if (state.currentTrack && state.isPaused) {
+      const audio = document.querySelector('audio') as HTMLAudioElement;
+      if (audio) {
+        audio.play().then(() => {
+          set({ isPaused: false, isPlaying: true });
+        }).catch(error => {
+          console.error('Failed to resume track:', error);
+        });
+      }
+    }
+  },
+
+  // Stop track
+  stopTrack: () => {
+    const audio = document.querySelector('audio') as HTMLAudioElement;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    
+    set({
+      currentTrack: null,
+      isPlaying: false,
+      isPaused: false,
+      currentTime: 0
+    });
+  },
+
+  // Set volume
+  setVolume: (volume: number) => {
+    const state = get();
+    if (state.audioContext.gainNode) {
+      state.audioContext.gainNode.gain.value = volume;
+    }
+    
+    set(state => ({
+      settings: { ...state.settings, masterVolume: volume }
+    }));
+  },
+
+  // Set master volume
+  setMasterVolume: (volume: number) => {
+    const state = get();
+    if (state.audioContext.gainNode) {
+      state.audioContext.gainNode.gain.value = volume;
+    }
+    
+    set(state => ({
+      settings: { ...state.settings, masterVolume: volume }
+    }));
+  },
+
+  // Set music volume
+  setMusicVolume: (volume: number) => {
+    const state = get();
+    if (state.audioContext.musicGain) {
+      state.audioContext.musicGain.gain.value = volume;
+    }
+    
+    set(state => ({
+      settings: { ...state.settings, musicVolume: volume }
+    }));
+  },
+
+  // Set SFX volume
+  setSfxVolume: (volume: number) => {
+    const state = get();
+    if (state.audioContext.sfxGain) {
+      state.audioContext.sfxGain.gain.value = volume;
+    }
+    
+    set(state => ({
+      settings: { ...state.settings, sfxVolume: volume }
+    }));
+  },
+
+  // Set ambient volume
+  setAmbientVolume: (volume: number) => {
+    const state = get();
+    if (state.audioContext.ambientGain) {
+      state.audioContext.ambientGain.gain.value = volume;
+    }
+    
+    set(state => ({
+      settings: { ...state.settings, ambientVolume: volume }
+    }));
+  },
+
+  // Toggle mute
   toggleMute: () => {
-    const { isMuted } = get();
-    const newMutedState = !isMuted;
+    const state = get();
+    const newMuted = !state.settings.muted;
     
-    // Just update the muted state
-    set({ isMuted: newMutedState });
+    if (state.audioContext.gainNode) {
+      state.audioContext.gainNode.gain.value = newMuted ? 0 : state.settings.masterVolume;
+    }
     
-    // Log the change
-    console.log(`Sound ${newMutedState ? 'muted' : 'unmuted'}`);
+    set(state => ({
+      settings: { ...state.settings, muted: newMuted }
+    }));
   },
-  
-  playHit: () => {
-    const { hitSound, isMuted } = get();
-    if (hitSound) {
-      // If sound is muted, don't play anything
-      if (isMuted) {
-        console.log("Hit sound skipped (muted)");
-        return;
-      }
+
+  // Fade in
+  fadeIn: (trackId: string, duration: number) => {
+    const state = get();
+    const track = state.tracks.find(t => t.id === trackId);
+    
+    if (!track || !state.audioContext.isInitialized) return;
+
+    state.playTrack(trackId);
+    
+    if (state.audioContext.gainNode) {
+      const gainNode = state.audioContext.gainNode;
+      gainNode.gain.value = 0;
       
-      // Clone the sound to allow overlapping playback
-      const soundClone = hitSound.cloneNode() as HTMLAudioElement;
-      soundClone.volume = 0.3;
-      soundClone.play().catch(error => {
-        console.log("Hit sound play prevented:", error);
-      });
+      const startTime = state.audioContext.audioContext!.currentTime;
+      gainNode.gain.linearRampToValueAtTime(
+        state.settings.masterVolume,
+        startTime + duration
+      );
     }
   },
-  
-  playSuccess: () => {
-    const { successSound, isMuted } = get();
-    if (successSound) {
-      // If sound is muted, don't play anything
-      if (isMuted) {
-        console.log("Success sound skipped (muted)");
-        return;
-      }
+
+  // Fade out
+  fadeOut: (duration: number) => {
+    const state = get();
+    
+    if (state.audioContext.gainNode) {
+      const gainNode = state.audioContext.gainNode;
+      const startTime = state.audioContext.audioContext!.currentTime;
       
-      successSound.currentTime = 0;
-      successSound.play().catch(error => {
-        console.log("Success sound play prevented:", error);
-      });
+      gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
+      
+      setTimeout(() => {
+        state.stopTrack();
+      }, duration * 1000);
     }
+  },
+
+  // Crossfade between tracks
+  crossfade: (fromTrackId: string, toTrackId: string, duration: number) => {
+    const state = get();
+    
+    // Start fade out of current track
+    state.fadeOut(duration);
+    
+    // Start fade in of new track
+    setTimeout(() => {
+      state.fadeIn(toTrackId, duration);
+    }, duration * 1000 / 2);
+  },
+
+  // Add track
+  addTrack: (track: AudioTrack) => {
+    set(state => ({
+      tracks: [...state.tracks, track]
+    }));
+  },
+
+  // Remove track
+  removeTrack: (trackId: string) => {
+    set(state => ({
+      tracks: state.tracks.filter(t => t.id !== trackId)
+    }));
+  },
+
+  // Get track
+  getTrack: (trackId: string) => {
+    const state = get();
+    return state.tracks.find(t => t.id === trackId) || null;
+  },
+
+  // Get tracks by type
+  getTracksByType: (type: 'music' | 'sfx' | 'ambient') => {
+    const state = get();
+    return state.tracks.filter(t => t.type === type);
+  },
+
+  // Seek to time
+  seek: (time: number) => {
+    const audio = document.querySelector('audio') as HTMLAudioElement;
+    if (audio) {
+      audio.currentTime = time;
+      set({ currentTime: time });
+    }
+  },
+
+  // Set loop
+  setLoop: (loop: boolean) => {
+    const audio = document.querySelector('audio') as HTMLAudioElement;
+    if (audio) {
+      audio.loop = loop;
+    }
+    
+    set(state => ({
+      currentTrack: state.currentTrack ? { ...state.currentTrack, loop } : null
+    }));
+  },
+
+  // Update current time
+  updateCurrentTime: (time: number) => {
+    set({ currentTime: time });
   }
 }));
