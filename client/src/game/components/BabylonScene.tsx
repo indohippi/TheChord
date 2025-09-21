@@ -174,7 +174,7 @@ export function BabylonScene({ antialias = true }: BabylonSceneProps) {
     if (gamePhase === 'mainMenu') {
       playTheme('menu');
     } else if (gamePhase === 'gameplay') {
-      playTheme(currentZone);
+      playTheme(currentZone || 'default');
     } else if (gamePhase === 'combat') {
       playTheme('combat');
     }
