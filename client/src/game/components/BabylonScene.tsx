@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as BABYLON from '@babylonjs/core';
 import { useGameState } from '@/lib/stores/useGameState';
-import { useAudio } from '@/lib/stores/useAudio';
 
 interface BabylonSceneProps {
   antialias?: boolean;
@@ -12,7 +11,6 @@ export function BabylonScene({ antialias = true }: BabylonSceneProps) {
   const engineRef = useRef<BABYLON.Engine | null>(null);
   const sceneRef = useRef<BABYLON.Scene | null>(null);
   const { gamePhase, currentZone, inCombat } = useGameState();
-  const { playTheme } = useAudio();
   
   // Initialize the Babylon scene
   useEffect(() => {
@@ -169,15 +167,6 @@ export function BabylonScene({ antialias = true }: BabylonSceneProps) {
   // Handle game phase changes
   useEffect(() => {
     console.log(`Game phase changed to: ${gamePhase}`);
-    
-    // Play appropriate music based on game phase
-    if (gamePhase === 'mainMenu') {
-      playTheme('menu');
-    } else if (gamePhase === 'gameplay') {
-      playTheme(currentZone);
-    } else if (gamePhase === 'combat') {
-      playTheme('combat');
-    }
     
     // Update scene appearance based on game phase
     if (sceneRef.current) {

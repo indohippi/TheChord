@@ -6,7 +6,6 @@ import { Controls } from '@/App';
 import { useCharacter } from '@/lib/stores/useCharacter';
 import { useGameState } from '@/lib/stores/useGameState';
 import { useEchoZone } from '@/lib/stores/useEchoZone';
-import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader';
 
 // Create a simple character sprite using Three.js shapes
 const createCharacterSprite = (characterClass: string | null) => {

@@ -11,7 +11,7 @@ import { EchoZone } from "@/game/components/EchoZone";
 import { Player } from "@/game/components/Player";
 import { MovementSystem } from "@/game/systems/MovementSystem";
 import { CollisionSystem } from "@/game/systems/CollisionSystem";
-import { CombatSystem, CombatActionType } from "@/game/systems/CombatSystem";
+import { CombatActionType } from "@/game/systems/CombatSystem";
 import { GridSystem, GridCell } from "@/game/systems/GridSystem";
 import { Grid } from "@/game/components/Grid";
 import { TacticalCombatUI } from "@/game/components/TacticalCombatUI";
@@ -22,6 +22,7 @@ import { CombatActionMenu } from "@/game/components/CombatActionMenu";
 import { CombatLogPanel } from "@/game/components/CombatLogPanel";
 import { useTacticalCombat } from "@/game/hooks/useTacticalCombat";
 import "@fontsource/inter";
+import { useCharacter } from "@/lib/stores/useCharacter";
 
 // Define control keys for the game
 export enum Controls {
@@ -41,6 +42,7 @@ function App() {
   const { gamePhase, setGamePhase, inCombat } = useGameState();
   const [showCanvas, setShowCanvas] = useState(false);
   const [activeCombatAction, setActiveCombatAction] = useState<CombatActionType | null>(null);
+  const { activeAbilityIndex } = useCharacter();
   
   // Import our tactical combat hook
   const { 
@@ -81,24 +83,46 @@ function App() {
     if (!activeCombatAction) return;
     
     console.log(`Grid cell clicked at [${cell.position[0]}, ${cell.position[1]}] with action ${activeCombatAction}`);
-    
-    // Dispatch the action to our tactical combat system
+    const [worldX, _worldY, worldZ] = cell.worldPosition;
+
     switch (activeCombatAction) {
-      case CombatActionType.MOVE:
-        // Execute movement to the grid cell position
-        executeMove([cell.position[0], 0, cell.position[1]]);
+      case CombatActionType.MOVE: {
+        // Execute movement to the cell world position
+        executeMove([worldX, 0, worldZ]);
         break;
-        
-      case CombatActionType.ATTACK:
-        // In a complete implementation, we would find an enemy at this position
-        // For now, we'll just reset the action
+      }
+      case CombatActionType.ATTACK: {
+        // Find an enemy near this cell
+        const target = combatState.enemies.find(e => {
+          const [ex, _ey, ez] = e.position;
+          const dx = Math.abs(ex - worldX);
+          const dz = Math.abs(ez - worldZ);
+          return dx < 0.6 && dz < 0.6;
+        });
+        if (target) {
+          // Option 1: selectEnemy (auto-attacks in action phase)
+          // selectEnemy(target.id);
+          // Option 2: directly execute attack
+          executeAttack(target.id);
+        }
         break;
-        
-      case CombatActionType.ABILITY:
-        // In a complete implementation, we would apply ability effects at this position
-        // For now, we'll just reset the action
+      }
+      case CombatActionType.ABILITY: {
+        if (activeAbilityIndex == null) {
+          // No ability selected
+          break;
+        }
+        const target = combatState.enemies.find(e => {
+          const [ex, _ey, ez] = e.position;
+          const dx = Math.abs(ex - worldX);
+          const dz = Math.abs(ez - worldZ);
+          return dx < 0.6 && dz < 0.6;
+        });
+        if (target) {
+          executeAbility(activeAbilityIndex, target.id);
+        }
         break;
-        
+      }
       default:
         break;
     }
@@ -136,7 +160,6 @@ function App() {
                 {/* Game systems */}
                 <MovementSystem />
                 <CollisionSystem />
-                <CombatSystem />
                 <GridSystem />
                 
                 {/* Camera controls for tactical view during combat */}
@@ -175,7 +198,10 @@ function App() {
               ) : (
                 <>
                   <CombatActionMenu 
-                    onActionSelected={setActiveCombatAction}
+                    onActionSelected={(action) => {
+                      setActiveCombatAction(action);
+                      if (action) selectAction(action);
+                    }}
                   />
                   <CombatLogPanel />
                 </>

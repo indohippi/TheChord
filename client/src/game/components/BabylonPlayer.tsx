@@ -10,7 +10,7 @@ interface BabylonPlayerProps {
 
 export function BabylonPlayer({ scene }: BabylonPlayerProps) {
   const meshRef = useRef<BABYLON.Mesh | null>(null);
-  const { position, updatePosition } = useCharacter();
+  const { position, setPosition } = useCharacter();
   const { gamePhase, inCombat } = useGameState();
   
   // Track movement keys pressed
@@ -149,7 +149,7 @@ export function BabylonPlayer({ scene }: BabylonPlayerProps) {
         mesh.position.addInPlace(movement);
         
         // Update character position in the store
-        updatePosition([mesh.position.x, mesh.position.y, mesh.position.z]);
+        setPosition([mesh.position.x, mesh.position.y, mesh.position.z]);
       }
     });
     

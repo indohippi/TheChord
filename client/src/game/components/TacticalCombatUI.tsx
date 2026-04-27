@@ -170,7 +170,7 @@ export function TacticalCombatUI({
               fontSize={0.25}
               color="white"
               anchorX="center"
-              anchorY="center"
+              anchorY="middle"
             >
               Move
             </Text>
@@ -190,7 +190,7 @@ export function TacticalCombatUI({
               fontSize={0.25}
               color="white"
               anchorX="center"
-              anchorY="center"
+              anchorY="middle"
             >
               Attack
             </Text>
@@ -210,7 +210,7 @@ export function TacticalCombatUI({
               fontSize={0.25}
               color="white"
               anchorX="center"
-              anchorY="center"
+              anchorY="middle"
             >
               Ability
             </Text>
@@ -227,7 +227,7 @@ export function TacticalCombatUI({
               fontSize={0.25}
               color="white"
               anchorX="center"
-              anchorY="center"
+              anchorY="middle"
             >
               End Turn
             </Text>
@@ -248,7 +248,7 @@ export function TacticalCombatUI({
             fontSize={0.3}
             color="white"
             anchorX="center"
-            anchorY="center"
+            anchorY="middle"
           >
             Select Ability
           </Text>
@@ -267,7 +267,7 @@ export function TacticalCombatUI({
                 fontSize={0.25}
                 color="white"
                 anchorX="center"
-                anchorY="center"
+                anchorY="middle"
               >
                 {`${ability.name} (Cost: ${ability.energyCost})`}
               </Text>

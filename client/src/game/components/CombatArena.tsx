@@ -62,6 +62,7 @@ export function CombatArena() {
           isSelected={enemy.id === combatState.selectedEnemyId}
           currentHealth={enemy.currentHealth}
           onSelect={selectEnemy}
+          effects={(enemy as any).effects || []}
         />
       ))}
       

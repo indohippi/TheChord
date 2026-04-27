@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Howl } from 'howler';
+// Provide a minimal Howler global type to satisfy TypeScript if @types/howler is missing
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const Howler: any;
 import { useGameState } from '@/lib/stores/useGameState';
 import { useEchoZone } from '@/lib/stores/useEchoZone';
 import { useAudio } from '@/lib/stores/useAudio';
@@ -40,7 +43,7 @@ export function SoundManager() {
       autoplay: false,
     });
     
-    // Add to audio store
+    // Add to audio store (cast to any-compatible since store expects HTMLAudioElement)
     setBackgroundMusic(bgMusic as unknown as HTMLAudioElement);
     setHitSound(hitSfx as unknown as HTMLAudioElement);
     setSuccessSound(successSfx as unknown as HTMLAudioElement);
@@ -49,14 +52,16 @@ export function SoundManager() {
     setCurrentBgm(bgMusic);
     
     // Set initial mute state based on store
-    if (isMuted) {
-      Howler.mute(true);
+    if (typeof Howler !== 'undefined') {
+      Howler.mute(!!isMuted);
     }
     
     return () => {
       // Clean up
       bgMusic.stop();
-      Howler.mute(false);
+      if (typeof Howler !== 'undefined') {
+        Howler.mute(false);
+      }
     };
   }, []);
   
@@ -102,7 +107,9 @@ export function SoundManager() {
       className="fixed top-4 right-4 z-50 w-10 h-10 flex items-center justify-center bg-gray-800 bg-opacity-80 text-white rounded-full hover:bg-gray-700"
       onClick={() => {
         toggleMute();
-        Howler.mute(!isMuted);
+        if (typeof Howler !== 'undefined') {
+          Howler.mute(!isMuted);
+        }
       }}
     >
       {isMuted ? (

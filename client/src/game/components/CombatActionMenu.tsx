@@ -18,7 +18,7 @@ interface CombatActionMenuProps {
 
 export function CombatActionMenu({ onActionSelected }: CombatActionMenuProps) {
   const { health, energy } = useGameState();
-  const { abilities } = useCharacter();
+  const { abilities, setActiveAbilityIndex } = useCharacter();
   const { combatState, selectAction, endPlayerTurn } = useTacticalCombat();
   const [abilityMenuOpen, setAbilityMenuOpen] = useState(false);
   
@@ -40,8 +40,9 @@ export function CombatActionMenu({ onActionSelected }: CombatActionMenuProps) {
   // Handle ability selection
   const handleAbilitySelect = (abilityIndex: number) => {
     console.log(`Selected ability: ${abilities[abilityIndex].name}`);
+    setActiveAbilityIndex(abilityIndex);
     setAbilityMenuOpen(false);
-    // In a complete implementation, we would store the selected ability for targeting
+    selectAction(CombatActionType.ABILITY);
     onActionSelected(CombatActionType.ABILITY);
   };
   
